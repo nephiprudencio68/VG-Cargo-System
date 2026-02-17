@@ -478,7 +478,65 @@
 
     async function logAction(a,d){ try{await window.addDoc(window.collection(window.db,"logs"),{timestamp:new Date().toLocaleString(),user:window.currentUserEmail,action:a,details:d});loadLogs();}catch(e){} }
     async function loadLogs(){ try{const q=window.query(window.collection(window.db,"logs"),window.orderBy("timestamp","desc"),window.limit(20));const s=await window.getDocs(q);let h="";s.forEach(d=>{const l=d.data();h+=`<div class="border-bottom p-1"><strong>${l.action}</strong> ${l.details}<br><span style="font-size:9px">${l.timestamp} by ${l.user}</span></div>`});document.getElementById('logsContainer').innerHTML=h;}catch(e){} }
-    async function exportToExcel(){ /* Same export logic */ }
+   // --- EXPORT TO EXCEL / CSV FUNCTION ---
+    async function exportToExcel() {
+        const btn = document.querySelector('button[onclick="exportToExcel()"]');
+        const origText = btn.innerText;
+        
+        // 1. Loading State
+        btn.innerText = "Downloading Data...";
+        btn.disabled = true;
+
+        try {
+            // 2. Kunin lahat ng Parcels sa Database
+            const q = window.query(window.collection(window.db, "parcels"), window.orderBy("waybill", "desc"));
+            const querySnapshot = await window.getDocs(q);
+
+            if (querySnapshot.empty) {
+                alert("No data to export.");
+                btn.innerText = origText;
+                btn.disabled = false;
+                return;
+            }
+
+            // 3. Gumawa ng CSV Header (Column Titles)
+            let csvContent = "Waybill,Status,Shipper Name,Shipper Address,Receiver Name,Receiver Address,Qty,Weight,Encoded By,Latest Update\n";
+
+            // 4. Loop sa bawat parcel at ilagay sa CSV
+            querySnapshot.forEach(doc => {
+                const d = doc.data();
+                
+                // Helper para linisin ang text (tanggalin ang commas para di masira ang format)
+                const clean = (text) => text ? `"${text.toString().replace(/"/g, '""')}"` : "";
+                
+                // Kunin ang latest history
+                const lastHist = d.history && d.history.length > 0 ? d.history[d.history.length - 1] : { time: '', location: '' };
+                const lastUpdate = `${lastHist.status} at ${lastHist.location} (${lastHist.time})`;
+
+                // Buuin ang row
+                csvContent += `${clean(d.waybill)},${clean(d.currentStatus)},${clean(d.shipper.name)},${clean(d.shipper.addr)},${clean(d.consignee.name)},${clean(d.consignee.addr)},${clean(d.details.qty)},${clean(d.details.weight)},${clean(d.createdBy)},${clean(lastUpdate)}\n`;
+            });
+
+            // 5. I-download bilang File
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `VG_Cargo_Report_${new Date().toLocaleDateString()}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (e) {
+            console.error(e);
+            alert("Export Failed: " + e.message);
+        }
+
+        // Reset Button
+        btn.innerText = origText;
+        btn.disabled = false;
+    }
     
     function reprintAll(){ if(currentTrackedData){generatePrintLayout(currentTrackedData);setTimeout(()=>window.print(),800);} }
     function reprintSpecific(){ if(currentTrackedData){generatePrintLayout(currentTrackedData,parseInt(document.getElementById('rpIndex').value));setTimeout(()=>window.print(),800);} }
@@ -493,3 +551,4 @@
 </script>
 </body>
 </html>
+
