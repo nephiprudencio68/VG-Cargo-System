@@ -63,42 +63,71 @@
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 31, 96, 0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         .login-box { background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; }
 
-        /* --- PRO WAYBILL PRINT STYLES --- */
+        /* --- PRO WAYBILL PRINT STYLES (100x150mm with WARNING) --- */
         #printArea { display: none; }
         @media print {
             #publicView, #staffView, #loginOverlay, .navbar { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
+            
+            @page { size: 100mm 150mm; margin: 0; }
+
             .sticker-page { 
-                width: 100mm; height: 150mm; margin: 0 auto; 
+                width: 100mm; height: 149mm; margin: 0 auto; 
                 border: 2px solid black; background: white; color: black;
                 font-family: 'Arial', sans-serif; display: flex; flex-direction: column;
                 box-sizing: border-box; padding: 0; 
                 page-break-after: always; break-after: always; page-break-inside: avoid;
-                float: none; clear: both; margin-bottom: 20px;
+                overflow: hidden;
             }
             .sticker-page:last-child { page-break-after: auto; }
-            .wb-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-bottom: 2px solid black; background: #eee; -webkit-print-color-adjust: exact; }
+
+            .wb-header { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; border-bottom: 2px solid black; background: #eee; -webkit-print-color-adjust: exact; }
             .wb-brand-box { display: flex; align-items: center; gap: 5px; }
-            .wb-logo { height: 25px; }
-            .wb-company-text { font-family: 'Oswald', sans-serif; font-size: 16px; font-weight: bold; color: black; letter-spacing: 0.5px; }
-            .wb-date { font-size: 10px; font-weight: bold; }
-            .wb-sort-zone { background: black; color: white; text-align: center; font-family: 'Oswald', sans-serif; font-size: 48px; font-weight: bold; line-height: 1; padding: 2px 0; letter-spacing: 3px; text-transform: uppercase; border-bottom: 2px solid black; -webkit-print-color-adjust: exact; }
-            .wb-qr-section { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; border-bottom: 2px solid black; }
+            .wb-logo { height: 20px; }
+            .wb-company-text { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: bold; color: black; letter-spacing: 0.5px; }
+            .wb-date { font-size: 9px; font-weight: bold; }
+            
+            .wb-sort-zone { background: black; color: white; text-align: center; font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: bold; line-height: 1; padding: 2px 0; letter-spacing: 3px; text-transform: uppercase; border-bottom: 2px solid black; -webkit-print-color-adjust: exact; }
+            
+            /* WARNING BANNER (FRAGILE/PERISHABLE) */
+            .wb-warning-banner {
+                background: white; color: black;
+                border-bottom: 2px solid black;
+                text-align: center;
+                font-family: 'Oswald', sans-serif;
+                font-weight: 900;
+                font-size: 24px;
+                padding: 5px;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                display: none; /* Hidden by default */
+            }
+            .wb-warning-banner.show {
+                display: block;
+                background: black !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .wb-qr-section { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-bottom: 2px solid black; }
             .wb-id-box { text-align: left; }
-            .wb-id-label { font-size: 9px; color: #555; font-weight: bold; text-transform: uppercase; }
-            .wb-id-text { font-size: 24px; font-weight: 900; letter-spacing: 1px; font-family: 'Oswald', sans-serif; }
-            .wb-qr-code { padding: 2px; } 
-            .wb-sender { padding: 5px 10px; border-bottom: 1px solid #999; font-size: 10px; line-height: 1.2; }
-            .wb-receiver { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
-            .wb-tag { background: black; color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; display: inline-block; width: fit-content; margin-bottom: 5px; -webkit-print-color-adjust: exact; }
-            .wb-rcv-name { font-size: 26px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; text-transform: uppercase; }
-            .wb-rcv-addr { font-size: 15px; line-height: 1.2; margin-bottom: 5px; }
-            .wb-rcv-contact { font-size: 16px; font-weight: bold; }
-            .wb-footer { display: flex; border-top: 3px solid black; height: 50px; }
+            .wb-id-label { font-size: 8px; color: #555; font-weight: bold; text-transform: uppercase; }
+            .wb-id-text { font-size: 22px; font-weight: 900; letter-spacing: 1px; font-family: 'Oswald', sans-serif; }
+            .wb-qr-code { padding: 0; } 
+            
+            .wb-sender { padding: 5px 8px; border-bottom: 1px solid #999; font-size: 9px; line-height: 1.2; }
+            
+            .wb-receiver { padding: 8px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+            .wb-tag { background: black; color: white; font-size: 9px; font-weight: bold; padding: 2px 5px; display: inline-block; width: fit-content; margin-bottom: 3px; -webkit-print-color-adjust: exact; }
+            .wb-rcv-name { font-size: 24px; font-weight: 900; line-height: 1.1; margin-bottom: 3px; text-transform: uppercase; }
+            .wb-rcv-addr { font-size: 14px; line-height: 1.2; margin-bottom: 3px; }
+            .wb-rcv-contact { font-size: 14px; font-weight: bold; }
+            
+            .wb-footer { display: flex; border-top: 3px solid black; height: 45px; }
             .wb-f-item { flex: 1; border-right: 2px solid black; display: flex; flex-direction: column; align-items: center; justify-content: center; }
             .wb-f-item:last-child { border-right: none; }
-            .wb-f-lbl { font-size: 9px; font-weight: bold; text-transform: uppercase; }
-            .wb-f-val { font-size: 16px; font-weight: 900; }
+            .wb-f-lbl { font-size: 8px; font-weight: bold; text-transform: uppercase; }
+            .wb-f-val { font-size: 14px; font-weight: 900; }
         }
     </style>
 </head>
@@ -174,11 +203,23 @@
                     <div class="col-6"><input type="number" id="qty" class="form-control" placeholder="Qty" value="1"></div>
                     <div class="col-6"><input type="text" id="weight" class="form-control" placeholder="Weight"></div>
                 </div>
+                
+                <!-- NEW: HANDLING DROPDOWN -->
+                <div class="mb-3">
+                    <label class="fw-bold small text-muted">SPECIAL HANDLING</label>
+                    <select id="handling" class="form-select fw-bold border-warning">
+                        <option value="Standard">Standard (None)</option>
+                        <option value="FRAGILE">⚠️ FRAGILE</option>
+                        <option value="PERISHABLE">🐟 PERISHABLE</option>
+                        <option value="FRAGILE & PERISHABLE">⚠️ FRAGILE & PERISHABLE</option>
+                    </select>
+                </div>
+
                 <button class="btn btn-primary w-100 fw-bold" onclick="createParcel()">SAVE & PRINT</button>
             </div>
         </div>
 
-        <!-- SCANNER (AUTO-SAVING DROPDOWN) -->
+        <!-- SCANNER -->
         <div id="scanner" class="staff-page hidden">
             <div class="card p-4">
                 <h5 class="text-primary fw-bold">Scanner</h5>
@@ -191,13 +232,12 @@
                         <option>Arrived at Hub</option><option>Out for Delivery</option><option>Delivered</option>
                     </select>
                     
-                    <!-- DYNAMIC LOCATION LIST -->
                     <select id="currentLocSelect" class="form-select mb-2" onchange="toggleCustomLoc()">
                         <option value="" disabled selected>Select Hub...</option>
                     </select>
                     
-                    <input type="text" id="currentLocCustom" class="form-control mb-2 hidden" placeholder="Type NEW Location Name (e.g. CDO HUB)">
-                    <small id="customLocNote" class="text-success hidden mb-2" style="font-size:0.8rem"><i class="fas fa-check-circle"></i> New location will be saved to list.</small>
+                    <input type="text" id="currentLocCustom" class="form-control mb-2 hidden" placeholder="Type NEW Location Name">
+                    <small id="customLocNote" class="text-success hidden mb-2" style="font-size:0.8rem"><i class="fas fa-check-circle"></i> New location will be saved.</small>
 
                     <button class="btn btn-success w-100" onclick="updateStatus()">UPDATE & SAVE</button>
                     <button class="btn btn-secondary w-100 mt-1" onclick="resetScan()">Cancel</button>
@@ -270,18 +310,13 @@
         if (user) {
             document.getElementById('displayEmail').innerText = user.email;
             window.currentUserEmail = user.email;
-            
-            // LOAD LOCATIONS with Safety Check
             loadLocations();
-
             let role = "Staff"; 
             if (user.email === "nephiprudencio68@gmail.com") role = "Admin"; 
             else { try { const d = await getDoc(doc(db, "users", user.email.toLowerCase())); if(d.exists()) role = d.data().role; } catch(e){} }
-            
             document.getElementById('roleBadge').innerText = role;
             if (role === "Admin") { document.getElementById('roleBadge').classList.replace('bg-secondary', 'bg-danger'); document.getElementById('adminMenuBtn').classList.remove('hidden'); } 
             else { document.getElementById('roleBadge').classList.replace('bg-danger', 'bg-secondary'); document.getElementById('adminMenuBtn').classList.add('hidden'); }
-            
             document.getElementById('publicView').classList.add('hidden'); document.getElementById('loginOverlay').classList.add('hidden');
             document.getElementById('staffView').classList.remove('hidden'); showPage('create');
         } else {
@@ -312,38 +347,18 @@
         document.getElementById('printArea').style.display = 'none';
     }
 
-    // --- ROBUST LOCATION SYSTEM ---
     function loadLocations() {
         const select = document.getElementById('currentLocSelect');
         const defaultHubs = ["MNL HUB (Manila)", "DVO HUB (Davao)", "CEB HUB (Cebu)", "ILO HUB (Iloilo)", "CGY HUB (Cagayan)", "GES HUB (Gensan)", "Rider (On Delivery)"];
-
-        // Listen to database
-        window.onSnapshot(window.doc(window.db, "settings", "locations"), 
-        (docSnap) => {
-            let hubs = defaultHubs; // Fallback
-
-            if (docSnap.exists() && docSnap.data().list) {
-                hubs = docSnap.data().list;
-            } else {
-                // If it doesn't exist yet, we can create it silently or just use default
-                console.log("No custom locations found, using default.");
-            }
-
-            // Clean list (remove duplicates and empty strings)
+        window.onSnapshot(window.doc(window.db, "settings", "locations"), (docSnap) => {
+            let hubs = defaultHubs;
+            if (docSnap.exists() && docSnap.data().list) hubs = docSnap.data().list;
             hubs = [...new Set(hubs)].filter(h => h);
-
             let options = `<option value="" disabled selected>Select Hub...</option>`;
-            hubs.sort().forEach(hub => {
-                options += `<option value="${hub}">${hub}</option>`;
-            });
-            
-            // Add 'Other' option
+            hubs.sort().forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
             options += `<option value="Other">➕ Add New Location...</option>`;
             select.innerHTML = options;
-        }, 
-        (error) => {
-            console.error("Error loading locations:", error);
-            // If error (like permission issue), show Default list so it's not "Loading..." forever
+        }, () => {
             let options = `<option value="" disabled selected>Select Hub...</option>`;
             defaultHubs.forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
             options += `<option value="Other">➕ Add New Location...</option>`;
@@ -355,66 +370,28 @@
         const select = document.getElementById('currentLocSelect');
         const customInput = document.getElementById('currentLocCustom');
         const note = document.getElementById('customLocNote');
-        
-        if (select.value === "Other") {
-            customInput.classList.remove('hidden');
-            note.classList.remove('hidden');
-            customInput.focus();
-        } else {
-            customInput.classList.add('hidden');
-            note.classList.add('hidden');
-        }
+        if (select.value === "Other") { customInput.classList.remove('hidden'); note.classList.remove('hidden'); customInput.focus(); } else { customInput.classList.add('hidden'); note.classList.add('hidden'); }
     }
 
     async function updateStatus(){ 
         const wb = document.getElementById('detectedWB').innerText; 
         const s = document.getElementById('newStatus').value; 
-        
         let l = document.getElementById('currentLocSelect').value;
         let isCustom = false;
-
-        if(l === "Other") {
-            l = document.getElementById('currentLocCustom').value.trim();
-            isCustom = true;
-        }
-
+        if(l === "Other") { l = document.getElementById('currentLocCustom').value.trim(); isCustom = true; }
         if(!s || !l) return alert("Select Status and Location");
-        
         try{ 
-            // 1. Update Parcel Status
-            await window.updateDoc(window.doc(window.db,"parcels",wb), {
-                currentStatus: s,
-                history: window.arrayUnion({
-                    status: s,
-                    location: l,
-                    time: new Date().toLocaleString(),
-                    user: window.currentUserEmail
-                })
-            }); 
-            
-            // 2. IF CUSTOM LOCATION: Save to Global List
-            if (isCustom) {
-                const settingsRef = window.doc(window.db, "settings", "locations");
-                // Check if doc exists first to avoid overwriting with just one item if logic fails
-                // But setDoc with merge:true handles creation nicely
-                await window.setDoc(settingsRef, {
-                    list: window.arrayUnion(l)
-                }, { merge: true });
-            }
-
-            alert("Updated Successfully!"); 
-            logAction("UPDATE", `${wb} -> ${s} at ${l}`); 
-            resetScan(); 
-
-        } catch(e) {
-            alert("Error: " + e.message);
-        }
+            await window.updateDoc(window.doc(window.db,"parcels",wb), { currentStatus: s, history: window.arrayUnion({ status: s, location: l, time: new Date().toLocaleString(), user: window.currentUserEmail }) }); 
+            if (isCustom) { await window.setDoc(window.doc(window.db, "settings", "locations"), { list: window.arrayUnion(l) }, { merge: true }); }
+            alert("Updated Successfully!"); logAction("UPDATE", `${wb} -> ${s} at ${l}`); resetScan(); 
+        } catch(e) { alert("Error: " + e.message); }
     }
 
-    // --- EXISTING FUNCTIONS ---
+    // --- UPDATED PRINT LAYOUT WITH WARNING BANNER ---
     function generatePrintLayout(data, specificOne = null) {
         const printArea = document.getElementById('printArea');
         printArea.innerHTML = ""; printArea.style.display = 'flex';
+        
         let destinationCode = "DOMESTIC";
         const addr = data.consignee.addr.toUpperCase();
         if(addr.includes("DAVAO")) destinationCode = "DVO";
@@ -423,13 +400,57 @@
         else if(addr.includes("ILOILO")) destinationCode = "ILO";
         else if(addr.includes("CDO") || addr.includes("CAGAYAN")) destinationCode = "CGY";
         else if(addr.includes("GENSAN")) destinationCode = "GES";
+
         const totalPcs = parseInt(data.details.qty) || 1;
         let start = 1; let end = totalPcs;
         if (specificOne) { start = specificOne; end = specificOne; }
+
+        // CHECK IF FRAGILE/PERISHABLE
+        const handling = data.details.handling || "Standard";
+        const showWarning = (handling !== "Standard") ? "show" : "";
+
         for (let i = start; i <= end; i++) {
             const sticker = document.createElement('div');
             sticker.className = 'sticker-page';
-            sticker.innerHTML = `<div class="wb-header"><div class="wb-brand-box"><img src="logo.png" class="wb-logo" onerror="this.style.display='none'"><span class="wb-company-text">VG FREIGHTAGE DOMESTIC</span></div><span class="wb-date">${new Date().toLocaleDateString()}</span></div><div class="wb-sort-zone">${destinationCode}</div><div class="wb-qr-section"><div class="wb-id-box"><div class="wb-id-label">WAYBILL NUMBER</div><div class="wb-id-text">${data.waybill}</div></div><div id="qr-${data.waybill}-${i}" class="wb-qr-code"></div></div><div class="wb-sender"><strong>FROM:</strong> ${data.shipper.name}<br>${data.shipper.addr} | ${data.shipper.contact}</div><div class="wb-receiver"><div class="wb-tag">CONSIGNEE / TO</div><div class="wb-rcv-name">${data.consignee.name}</div><div class="wb-rcv-addr">${data.consignee.addr}</div><div class="wb-rcv-contact">📞 ${data.consignee.contact}</div></div><div class="wb-footer"><div class="wb-f-item"><div class="wb-f-lbl">WEIGHT</div><div class="wb-f-val">${data.details.weight}</div></div><div class="wb-f-item"><div class="wb-f-lbl">PCS</div><div class="wb-f-val">${i}/${totalPcs}</div></div><div class="wb-f-item" style="font-size:8px;">Sign Here</div></div>`;
+            
+            sticker.innerHTML = `
+                <div class="wb-header">
+                    <div class="wb-brand-box">
+                        <img src="logo.png" class="wb-logo" onerror="this.style.display='none'">
+                        <span class="wb-company-text">VG FREIGHTAGE DOMESTIC</span>
+                    </div>
+                    <span class="wb-date">${new Date().toLocaleDateString()}</span>
+                </div>
+                
+                <div class="wb-sort-zone">${destinationCode}</div>
+                <div class="wb-warning-banner ${showWarning}">${handling}</div>
+                
+                <div class="wb-qr-section">
+                    <div class="wb-id-box">
+                        <div class="wb-id-label">WAYBILL NUMBER</div>
+                        <div class="wb-id-text">${data.waybill}</div>
+                    </div>
+                    <div id="qr-${data.waybill}-${i}" class="wb-qr-code"></div>
+                </div>
+                
+                <div class="wb-sender">
+                    <strong>FROM:</strong> ${data.shipper.name}<br>
+                    ${data.shipper.addr} | ${data.shipper.contact}
+                </div>
+                
+                <div class="wb-receiver">
+                    <div class="wb-tag">CONSIGNEE / TO</div>
+                    <div class="wb-rcv-name">${data.consignee.name}</div>
+                    <div class="wb-rcv-addr">${data.consignee.addr}</div>
+                    <div class="wb-rcv-contact">📞 ${data.consignee.contact}</div>
+                </div>
+                
+                <div class="wb-footer">
+                    <div class="wb-f-item"><div class="wb-f-lbl">WEIGHT</div><div class="wb-f-val">${data.details.weight}</div></div>
+                    <div class="wb-f-item"><div class="wb-f-lbl">PCS</div><div class="wb-f-val">${i}/${totalPcs}</div></div>
+                    <div class="wb-f-item" style="font-size:8px;">Sign Here</div>
+                </div>
+            `;
             printArea.appendChild(sticker);
             new QRCode(document.getElementById(`qr-${data.waybill}-${i}`), { text: data.waybill, width: 120, height: 120 });
         }
@@ -440,9 +461,22 @@
     function resetScan(){ document.getElementById('scanAction').classList.add('hidden'); document.getElementById('newStatus').value=""; document.getElementById('currentLocSelect').value=""; document.getElementById('currentLocCustom').classList.add('hidden'); document.getElementById('customLocNote').classList.add('hidden'); if(html5QrcodeScanner)html5QrcodeScanner.resume(); }
     
     function generateRandomWB(){ document.getElementById('wbInput').value="VG-"+Math.floor(100000+Math.random()*900000); }
+    
     async function createParcel(){
         const wb=document.getElementById('wbInput').value;
-        const d={waybill:wb,shipper:{name:document.getElementById('shipperName').value,addr:document.getElementById('shipperAddr').value,contact:document.getElementById('shipperContact').value},consignee:{name:document.getElementById('consigneeName').value,addr:document.getElementById('consigneeAddr').value,contact:document.getElementById('consigneeContact').value},details:{qty:document.getElementById('qty').value,weight:document.getElementById('weight').value},currentStatus:"Accepted",createdBy:window.currentUserEmail,history:[{status:"Accepted",location:"Origin",time:new Date().toLocaleString(),user:window.currentUserEmail}]};
+        const d={
+            waybill:wb,
+            shipper:{name:document.getElementById('shipperName').value,addr:document.getElementById('shipperAddr').value,contact:document.getElementById('shipperContact').value},
+            consignee:{name:document.getElementById('consigneeName').value,addr:document.getElementById('consigneeAddr').value,contact:document.getElementById('consigneeContact').value},
+            details:{
+                qty:document.getElementById('qty').value,
+                weight:document.getElementById('weight').value,
+                handling:document.getElementById('handling').value // SAVE HANDLING TYPE
+            },
+            currentStatus:"Accepted",
+            createdBy:window.currentUserEmail,
+            history:[{status:"Accepted",location:"Origin",time:new Date().toLocaleString(),user:window.currentUserEmail}]
+        };
         if(!d.shipper.name || !d.consignee.name) return alert("Fill names");
         try{ await window.setDoc(window.doc(window.db,"parcels",wb),d); logAction("CREATE",wb); generatePrintLayout(d); setTimeout(()=>window.print(),800); }catch(e){alert("Error");}
     }
@@ -478,64 +512,27 @@
 
     async function logAction(a,d){ try{await window.addDoc(window.collection(window.db,"logs"),{timestamp:new Date().toLocaleString(),user:window.currentUserEmail,action:a,details:d});loadLogs();}catch(e){} }
     async function loadLogs(){ try{const q=window.query(window.collection(window.db,"logs"),window.orderBy("timestamp","desc"),window.limit(20));const s=await window.getDocs(q);let h="";s.forEach(d=>{const l=d.data();h+=`<div class="border-bottom p-1"><strong>${l.action}</strong> ${l.details}<br><span style="font-size:9px">${l.timestamp} by ${l.user}</span></div>`});document.getElementById('logsContainer').innerHTML=h;}catch(e){} }
-   // --- EXPORT TO EXCEL / CSV FUNCTION ---
+    
     async function exportToExcel() {
-        const btn = document.querySelector('button[onclick="exportToExcel()"]');
-        const origText = btn.innerText;
-        
-        // 1. Loading State
-        btn.innerText = "Downloading Data...";
-        btn.disabled = true;
-
+        const btn = document.querySelector('button[onclick="exportToExcel()"]'); const origText = btn.innerText; btn.innerText = "Downloading Data..."; btn.disabled = true;
         try {
-            // 2. Kunin lahat ng Parcels sa Database
             const q = window.query(window.collection(window.db, "parcels"), window.orderBy("waybill", "desc"));
             const querySnapshot = await window.getDocs(q);
-
-            if (querySnapshot.empty) {
-                alert("No data to export.");
-                btn.innerText = origText;
-                btn.disabled = false;
-                return;
-            }
-
-            // 3. Gumawa ng CSV Header (Column Titles)
-            let csvContent = "Waybill,Status,Shipper Name,Shipper Address,Receiver Name,Receiver Address,Qty,Weight,Encoded By,Latest Update\n";
-
-            // 4. Loop sa bawat parcel at ilagay sa CSV
+            if (querySnapshot.empty) { alert("No data."); btn.innerText = origText; btn.disabled = false; return; }
+            let csvContent = "Waybill,Status,Shipper Name,Shipper Address,Receiver Name,Receiver Address,Qty,Weight,Encoded By,Handling,Latest Update\n";
             querySnapshot.forEach(doc => {
                 const d = doc.data();
-                
-                // Helper para linisin ang text (tanggalin ang commas para di masira ang format)
                 const clean = (text) => text ? `"${text.toString().replace(/"/g, '""')}"` : "";
-                
-                // Kunin ang latest history
                 const lastHist = d.history && d.history.length > 0 ? d.history[d.history.length - 1] : { time: '', location: '' };
                 const lastUpdate = `${lastHist.status} at ${lastHist.location} (${lastHist.time})`;
-
-                // Buuin ang row
-                csvContent += `${clean(d.waybill)},${clean(d.currentStatus)},${clean(d.shipper.name)},${clean(d.shipper.addr)},${clean(d.consignee.name)},${clean(d.consignee.addr)},${clean(d.details.qty)},${clean(d.details.weight)},${clean(d.createdBy)},${clean(lastUpdate)}\n`;
+                csvContent += `${clean(d.waybill)},${clean(d.currentStatus)},${clean(d.shipper.name)},${clean(d.shipper.addr)},${clean(d.consignee.name)},${clean(d.consignee.addr)},${clean(d.details.qty)},${clean(d.details.weight)},${clean(d.createdBy)},${clean(d.details.handling)},${clean(lastUpdate)}\n`;
             });
-
-            // 5. I-download bilang File
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `VG_Cargo_Report_${new Date().toLocaleDateString()}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-        } catch (e) {
-            console.error(e);
-            alert("Export Failed: " + e.message);
-        }
-
-        // Reset Button
-        btn.innerText = origText;
-        btn.disabled = false;
+            const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `VG_Cargo_Report_${new Date().toLocaleDateString()}.csv`);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        } catch (e) { alert("Export Failed: " + e.message); }
+        btn.innerText = origText; btn.disabled = false;
     }
     
     function reprintAll(){ if(currentTrackedData){generatePrintLayout(currentTrackedData);setTimeout(()=>window.print(),800);} }
@@ -547,8 +544,6 @@
     window.createStaffAccount=createStaffAccount;window.setRole=setRole;window.exportToExcel=exportToExcel;
     window.reprintAll=reprintAll;window.reprintSpecific=reprintSpecific;
     window.toggleCustomLoc=toggleCustomLoc;
-    window.loadLocations=loadLocations;
 </script>
 </body>
 </html>
-
