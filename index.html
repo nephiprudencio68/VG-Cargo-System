@@ -2,597 +2,526 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VG HRIS | Payroll v16.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VG Freightage System</title>
     
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet"> 
     
     <style>
-        :root { --primary: #064e3b; --secondary: #334155; --accent: #10b981; --bg-light: #f0fdf4; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--primary); font-size: 0.9rem; }
+        body { background-color: #f0f2f5; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+        :root { --vg-blue: #001f60; --vg-green: #00c853; --vg-red: #d32f2f; }
+
+        .navbar { background-color: white; border-bottom: 3px solid var(--vg-blue); }
+        .hero-section { background: linear-gradient(135deg, var(--vg-blue) 0%, #000c24 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 30px; }
         
-        .wrapper { display: flex; width: 100%; }
-        .sidebar { min-width: 240px; background: var(--primary); color: #fff; min-height: 100vh; }
-        .sidebar .header { padding: 20px; background: rgba(0,0,0,0.2); text-align: center; }
-        .sidebar a { padding: 15px 20px; display: block; color: #a7f3d0; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-        .sidebar a:hover, .sidebar a.active { background: var(--accent); color: #fff; padding-left: 25px; }
+        /* SCANNER SPECIFIC STYLES (MATCHING YOUR SCREENSHOT) */
+        #reader { width: 100%; background: black; min-height: 300px; border-bottom: 5px solid var(--vg-blue); }
+        #reader video { object-fit: cover; }
         
-        #content { width: 100%; padding: 20px; overflow-x: hidden; }
-        .card { border: none; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .table-input { border: 1px solid #dee2e6; width: 100%; padding: 5px; border-radius: 4px; }
+        .scan-card {
+            background: white; border-radius: 10px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: -20px; position: relative; z-index: 10;
+        }
+        .scan-label { font-size: 0.7rem; font-weight: 800; color: #555; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .wb-display { background: #eef2f7; color: #001f60; font-weight: bold; text-align: center; padding: 10px; border-radius: 5px; border: 1px dashed #001f60; }
+        
+        .btn-menu { height: 90px; border: 1px solid #eee; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: white; }
+        .icon-box { color: var(--vg-blue); margin-bottom: 5px; }
+        .card { border-top: 5px solid var(--vg-green); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
 
-        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 9999; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: white; padding: 40px; border-radius: 10px; width: 350px; }
+        #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 31, 96, 0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; }
 
-        /* --- PRINT STYLES --- */
+        /* PRINT STYLES */
         #printArea { display: none; }
-        
         @media print {
-            body * { visibility: hidden; }
-            #printArea, #printArea * { visibility: visible !important; }
-            #printArea { position: absolute; left: 0; top: 0; width: 100%; background: white; z-index: 9999; display: block !important; }
-            .no-print { display: none !important; }
-            
-            @page { size: A4 landscape; margin: 5mm; }
-
-            /* PAYSLIP STYLE */
-            .payslip-wrapper { display: flex; justify-content: space-between; width: 100%; border: 1px dashed #999; height: 135mm; margin-bottom: 10mm; page-break-inside: avoid; box-sizing: border-box; }
-            .payslip-half { width: 49%; padding: 15px; box-sizing: border-box; font-family: 'Arial', sans-serif; font-size: 10px; display: flex; flex-direction: column; border: 1px solid #000; }
-            .payslip-left { border-right: 1px dotted #000; }
-            .ps-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
-            .ps-title { font-weight: bold; font-size: 14px; text-transform: uppercase; }
-            .ps-info { margin-bottom: 10px; font-size: 11px; }
-            .ps-grid { display: flex; gap: 10px; flex-grow: 1; }
-            .ps-col { flex: 1; }
-            .ps-box { border: 1px solid #ccc; padding: 5px; height: 100%; }
-            .ps-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #ddd; padding: 3px 0; }
-            .ps-net { background: #eee; border: 2px solid #000; padding: 10px; text-align: center; font-weight: bold; font-size: 14px; margin-top: 10px; -webkit-print-color-adjust: exact; }
-            .ps-footer { margin-top: 15px; font-size: 9px; font-style: italic; text-align: center; }
-            .copy-tag { float: right; font-weight: bold; border: 1px solid #000; padding: 2px 4px; font-size: 8px; }
-
-            /* SUMMARY STYLE */
-            .rpt-header { text-align: center; margin-bottom: 20px; font-family: Arial, sans-serif; }
-            .rpt-title { font-size: 20px; font-weight: bold; text-transform: uppercase; }
-            .rpt-table { width: 100%; border-collapse: collapse; font-family: 'Arial', sans-serif; font-size: 10px; }
-            .rpt-table th { background-color: #ddd !important; border: 1px solid #000; padding: 6px; text-align: center; -webkit-print-color-adjust: exact; }
-            .rpt-table td { border: 1px solid #000; padding: 4px; }
-            .rpt-total { font-weight: bold; background-color: #eee !important; -webkit-print-color-adjust: exact; }
+            #publicView, #staffView, #loginOverlay, .navbar { display: none !important; }
+            #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
+            @page { size: 100mm 150mm; margin: 0; }
+            .sticker-page { width: 100mm; height: 149mm; margin: 0 auto; border: 4px solid black; background: white; color: black; font-family: 'Oswald', sans-serif; display: flex; flex-direction: column; box-sizing: border-box; padding: 0; page-break-after: always; break-after: always; page-break-inside: avoid; overflow: hidden; }
+            .sticker-page:last-child { page-break-after: auto; }
+            .wb-header { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; border-bottom: 2px solid black; background: #eee; -webkit-print-color-adjust: exact; }
+            .wb-brand-box { display: flex; align-items: center; gap: 5px; }
+            .wb-logo { height: 20px; }
+            .wb-company-text { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: bold; color: black; letter-spacing: 0.5px; }
+            .wb-date { font-size: 9px; font-weight: bold; }
+            .wb-sort-zone { background: black; color: white; text-align: center; font-family: 'Oswald', sans-serif; font-size: 42px; font-weight: bold; line-height: 1; padding: 2px 0; letter-spacing: 3px; text-transform: uppercase; border-bottom: 2px solid black; -webkit-print-color-adjust: exact; }
+            .wb-warning-banner { background: white; color: black; border-bottom: 2px solid black; text-align: center; font-family: 'Oswald', sans-serif; font-weight: 900; font-size: 24px; padding: 5px; text-transform: uppercase; letter-spacing: 2px; display: none; }
+            .wb-warning-banner.show { display: block; background: black !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .wb-qr-section { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-bottom: 2px solid black; }
+            .wb-id-box { text-align: left; }
+            .wb-id-label { font-size: 8px; color: #555; font-weight: bold; text-transform: uppercase; }
+            .wb-id-text { font-size: 28px; font-weight: 900; letter-spacing: 1px; font-family: 'Oswald', sans-serif; }
+            .wb-qr-code { padding: 0; } 
+            .wb-sender { padding: 8px; border-bottom: 1px solid black; font-size: 11px; line-height: 1.2; }
+            .wb-receiver { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+            .wb-tag { background: black; color: white; font-size: 10px; font-weight: bold; padding: 2px 5px; display: inline-block; width: fit-content; margin-bottom: 5px; -webkit-print-color-adjust: exact; }
+            .wb-rcv-name { font-size: 32px; font-weight: 900; line-height: 1.1; margin-bottom: 5px; text-transform: uppercase; font-family: 'Oswald', sans-serif; }
+            .wb-rcv-addr { font-size: 14px; font-weight: bold; line-height: 1.2; margin-bottom: 3px; }
+            .wb-footer { display: flex; border-top: 3px solid black; height: 50px; }
+            .wb-f-item { flex: 1; border-right: 2px solid black; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .wb-f-item:last-child { border-right: none; }
+            .wb-f-lbl { font-size: 9px; font-weight: bold; text-transform: uppercase; }
+            .wb-f-val { font-size: 18px; font-weight: 900; }
         }
     </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="loginOverlay">
-    <div class="login-box text-center">
-        <h3 class="fw-bold mb-3 text-success">VG HRIS</h3>
+<div id="loginOverlay" class="hidden">
+    <div class="login-box">
+        <img src="logo.png" style="height: 60px; margin-bottom: 20px;" onerror="this.src='https://cdn-icons-png.flaticon.com/512/754/754769.png'">
+        <h4 style="color:var(--vg-blue); font-weight:800;">STAFF LOGIN</h4>
         <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email">
         <input type="password" id="loginPass" class="form-control mb-3" placeholder="Password">
-        <button class="btn btn-success w-100" onclick="login()">LOGIN</button>
+        <button class="btn btn-primary w-100" onclick="login()">LOGIN</button>
     </div>
 </div>
 
-<!-- APP -->
-<div id="mainApp" class="wrapper hidden">
-    <nav class="sidebar">
-        <div class="header">
-            <h5 class="m-0 fw-bold">VG Payroll v16</h5>
-            <small class="text-white-50" id="userDisplay">...</small>
+<!-- PUBLIC TRACKING -->
+<div id="publicView">
+    <nav class="navbar shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="logo.png" alt="VG" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/754/754769.png'; this.style.height='35px';">
+                <span class="brand-text fw-bold" style="color:var(--vg-blue)">VG FREIGHTAGE</span>
+            </a>
+            <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="openLogin()"><i class="fas fa-lock"></i> Staff</button>
         </div>
-        <ul class="list-unstyled">
-            <li><a href="#" onclick="nav('dashboard')" id="nav-dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="#" onclick="nav('employees')" id="nav-employees"><i class="fas fa-users"></i> Employees</a></li>
-            <li><a href="#" onclick="nav('payroll')" id="nav-payroll"><i class="fas fa-calculator"></i> Batch Payroll</a></li>
-            <li><a href="#" onclick="nav('history')" id="nav-history"><i class="fas fa-print"></i> History & Reports</a></li>
-            <li><a href="#" onclick="nav('users')" id="nav-users"><i class="fas fa-user-shield"></i> User Mgmt</a></li>
-            <li><a href="#" onclick="logout()" class="text-warning mt-5"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
     </nav>
-
-    <div id="content">
-        <!-- 1. DASHBOARD -->
-        <div id="page-dashboard" class="page-section">
-            <h4 class="fw-bold mb-3">Dashboard</h4>
-            <div class="row g-3">
-                <div class="col-md-3"><div class="card p-3 bg-primary text-white"><small>Employees</small><h2 class="fw-bold" id="dashCount">0</h2></div></div>
-                <div class="col-md-3"><div class="card p-3 bg-success text-white"><small>Net Paid</small><h2 class="fw-bold" id="dashTotalNet">₱0.00</h2></div></div>
-                <div class="col-md-3"><div class="card p-3 bg-warning text-dark"><small>Gross Pay</small><h2 class="fw-bold" id="dashTotalGross">₱0.00</h2></div></div>
-                <div class="col-md-3"><div class="card p-3 bg-danger text-white"><small>Deductions</small><h2 class="fw-bold" id="dashTotalDed">₱0.00</h2></div></div>
-            </div>
-        </div>
-
-        <!-- 2. EMPLOYEES -->
-        <div id="page-employees" class="page-section hidden">
-            <h4 class="fw-bold mb-3">Employee Management</h4>
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="card p-3">
-                        <h6 class="fw-bold text-success">Add / Edit Employee</h6>
-                        <input type="hidden" id="editEmpId"> 
-                        <form onsubmit="event.preventDefault(); saveEmployee();">
-                            <div class="row g-2">
-                                <div class="col-4"><small>ID No.</small><input type="text" id="empID" class="form-control" required></div>
-                                <div class="col-8"><small>Full Name</small><input type="text" id="empName" class="form-control" required></div>
-                                
-                                <div class="col-6"><small>Branch</small><input type="text" id="empBranch" class="form-control" required list="branchList"></div>
-                                <div class="col-6"><small>Position</small><input type="text" id="empPos" class="form-control" required></div>
-                                
-                                <div class="col-6"><small>Rate (₱)</small><input type="number" id="empRate" class="form-control" step="0.01" required></div>
-                                <div class="col-6"><small>COLA</small><input type="number" id="empCola" class="form-control" value="0"></div>
-                            </div>
-                            
-                            <div class="mt-2 bg-light p-2 rounded border">
-                                <small class="fw-bold text-primary d-block mb-1">Fixed Deductions (2nd Cycle)</small>
-                                <div class="row g-2">
-                                    <div class="col-4"><input type="number" id="empSSSVal" class="form-control form-control-sm" placeholder="SSS"></div>
-                                    <div class="col-4"><input type="number" id="empPhilVal" class="form-control form-control-sm" placeholder="PhilH"></div>
-                                    <div class="col-4"><input type="number" id="empPagVal" class="form-control form-control-sm" placeholder="PagI"></div>
-                                </div>
-                            </div>
-
-                            <div class="mt-2 text-muted small">Gov Numbers</div>
-                            <input type="text" id="empSSS" class="form-control mb-1 form-control-sm" placeholder="SSS No.">
-                            <input type="text" id="empPhil" class="form-control mb-1 form-control-sm" placeholder="PhilHealth No.">
-                            <input type="text" id="empPag" class="form-control mb-1 form-control-sm" placeholder="Pag-IBIG No.">
-                            
-                            <div class="d-flex gap-2 mt-3">
-                                <button type="submit" class="btn btn-success flex-grow-1" id="btnSaveEmp">Save</button>
-                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()" id="btnCancelEdit" style="display:none;">Cancel</button>
-                            </div>
-                        </form>
-                        <datalist id="branchList"><option value="Manila"><option value="Davao"><option value="Cebu"></datalist>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <div class="card p-0"><div class="table-responsive" style="max-height: 600px;"><table class="table table-hover mb-0"><thead class="table-light sticky-top"><tr><th>Name</th><th>Branch</th><th>Rate</th><th>Action</th></tr></thead><tbody id="empTableBody"></tbody></table></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. PAYROLL -->
-        <div id="page-payroll" class="page-section hidden">
-            <h4 class="fw-bold mb-3">Batch Payroll</h4>
-            <div class="card p-3 mb-3 border-success">
-                <div class="row g-2 align-items-end">
-                    <div class="col-md-5">
-                        <small class="fw-bold">Period</small>
-                        <div class="input-group">
-                            <input type="date" id="periodStart" class="form-control">
-                            <span class="input-group-text">to</span>
-                            <input type="date" id="periodEnd" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-md-2"><small class="fw-bold">Cycle</small><select id="batchCycle" class="form-select" onchange="toggleGovDed()"><option value="1">1st (No Gov)</option><option value="2">2nd (With Gov)</option></select></div>
-                    <div class="col-md-3"><small class="fw-bold">Branch</small><select id="batchBranchFilter" class="form-select" onchange="loadPayrollTable()"><option value="All">All Branches</option></select></div>
-                    <div class="col-md-2"><button class="btn btn-primary w-100 fw-bold" onclick="loadPayrollTable()">LOAD</button></div>
-                </div>
-            </div>
-            <div class="card p-0">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-sm align-middle mb-0" style="font-size: 0.8rem;">
-                        <thead class="table-dark">
-                            <tr>
-                                <th width="15%">Name</th><th width="5%">Rate</th><th width="7%">Days</th><th width="7%">OT(Hr)</th>
-                                <th width="8%">Holiday</th><th width="8%">GROSS</th><th width="7%">Late</th><th width="7%">SSS</th>
-                                <th width="7%">PhilH</th><th width="7%">PagI</th><th width="7%">CA</th><th width="10%">NET PAY</th>
-                            </tr>
-                        </thead>
-                        <tbody id="payrollTableBody"><tr><td colspan="12" class="text-center p-3">Select dates and click LOAD</td></tr></tbody>
-                    </table>
-                </div>
-                <div class="p-3 text-end bg-light">
-                    <h4 class="d-inline me-3">Total: <span id="batchTotal">₱0.00</span></h4>
-                    <button class="btn btn-success fw-bold" onclick="saveBatchPayroll()"><i class="fas fa-save"></i> SAVE BATCH</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. HISTORY & PRINT (FIXED DROPDOWN) -->
-        <div id="page-history" class="page-section hidden">
-            <h4 class="fw-bold mb-3">History & Reports</h4>
-            <div class="row g-2 mb-3">
-                <div class="col-md-5">
-                    <label class="small">1. Select Period</label>
-                    <select id="histPeriodFilter" class="form-select" onchange="loadRecordsByPeriod()">
-                        <option value="">Select Period...</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="small">2. Filter Branch</label>
-                    <select id="histBranchFilter" class="form-select" onchange="filterHistoryTable()">
-                        <option value="All">All Branches</option>
-                    </select>
-                </div>
-                <div class="col-md-4 d-flex gap-2 align-items-end">
-                    <button class="btn btn-warning fw-bold flex-grow-1" onclick="printFiltered('payslip')"><i class="fas fa-ticket-alt"></i> PAYSLIPS</button>
-                    <button class="btn btn-secondary fw-bold flex-grow-1" onclick="printFiltered('summary')"><i class="fas fa-list"></i> SUMMARY</button>
-                </div>
-            </div>
-            <div class="card"><div class="table-responsive"><table class="table table-hover mb-0"><thead class="table-light"><tr><th>Name</th><th>Branch</th><th>Net Pay</th><th>Action</th></tr></thead><tbody id="historyTableBody"><tr><td colspan="4" class="text-center">Select a period above</td></tr></tbody></table></div></div>
-        </div>
-        
-        <!-- 5. USERS -->
-        <div id="page-users" class="page-section hidden">
-            <div class="card p-4">
-                <h4 class="fw-bold mb-3">User Management</h4>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <h6>Create User</h6>
-                        <input type="email" id="newEmail" class="form-control mb-2" placeholder="Email"><input type="password" id="newPassword" class="form-control mb-2" placeholder="Password"><button class="btn btn-secondary" onclick="createStaffAccount()">Create Account</button>
-                    </div>
-                </div>
+    <div class="hero-section">
+        <h2 class="fw-bold mb-2">Track Your Package</h2>
+        <div class="d-flex justify-content-center">
+            <div style="max-width:500px; width:100%;">
+                <input type="text" id="publicSearchInput" class="form-control form-control-lg text-center fw-bold mb-2" placeholder="Enter Waybill No.">
+                <button class="btn btn-success w-100 fw-bold" onclick="publicTrack()">TRACK NOW</button>
             </div>
         </div>
     </div>
+    <div class="container"><div id="publicResult" class="row justify-content-center"></div></div>
 </div>
 
-<!-- HOLIDAY MODAL -->
-<div class="modal fade" id="holidayModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white"><h5 class="modal-title">Holiday Pay</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <input type="hidden" id="holEmpId">
-                <div class="mb-3"><label class="small fw-bold">Name/Date</label><input type="text" id="holDesc" class="form-control" placeholder="e.g. Feb 25 EDSA"></div>
-                <div class="row g-2">
-                    <div class="col-6"><label class="small">Type</label><select id="holType" class="form-select" onchange="calcHolidayPreview()"><option value="reg_work">Reg Worked (200%)</option><option value="reg_nowork">Reg Unworked (100%)</option><option value="spec_work">Spec Worked (130%)</option></select></div>
-                    <div class="col-6"><label class="small">Days</label><input type="number" id="holDays" class="form-control" value="1" oninput="calcHolidayPreview()"></div>
-                </div>
-                <div class="alert alert-info mt-3">Add: <strong>₱<span id="holTotalAdd">0.00</span></strong></div>
+<!-- STAFF PANEL -->
+<div id="staffView" class="hidden">
+    <nav class="navbar sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="logo.png" alt="VG" onerror="this.style.display='none'">
+                <span class="fw-bold text-dark">STAFF PANEL</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <small class="me-2 fw-bold text-muted d-none d-md-block" id="displayEmail"></small>
+                <span id="roleBadge" class="badge bg-secondary me-2">...</span>
+                <button class="btn btn-sm btn-danger" onclick="logout()">Exit</button>
             </div>
-            <div class="modal-footer"><button type="button" class="btn btn-primary" onclick="applyHolidayPay()">Apply</button></div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div class="row text-center mb-4 g-2">
+            <div class="col-4"><button class="btn btn-menu shadow-sm w-100" onclick="showPage('create')"><div class="icon-box"><i class="fas fa-box-open fa-2x"></i></div><small>Create</small></button></div>
+            <div class="col-4"><button class="btn btn-menu shadow-sm w-100" onclick="showPage('scanner')"><div class="icon-box"><i class="fas fa-qrcode fa-2x"></i></div><small>Scan</small></button></div>
+            <div class="col-4"><button class="btn btn-menu shadow-sm w-100" onclick="showPage('tracker')"><div class="icon-box"><i class="fas fa-search fa-2x"></i></div><small>Track</small></button></div>
+            <div class="col-12 mt-2 hidden" id="adminMenuBtn">
+                <button class="btn btn-menu shadow-sm border-danger w-100" onclick="showPage('users')"><div class="icon-box text-danger"><i class="fas fa-user-shield fa-2x"></i></div><small class="text-danger fw-bold">ADMIN</small></button>
+            </div>
+        </div>
+
+        <div id="create" class="staff-page hidden">
+            <div class="card p-4">
+                <h5 class="text-primary fw-bold mb-3">Create Waybill</h5>
+                <div class="input-group mb-3"><input type="text" id="wbInput" class="form-control fw-bold"><button class="btn btn-secondary" onclick="generateRandomWB()">Auto</button></div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label class="small text-muted fw-bold">ORIGIN</label><input type="text" id="shipperAddr" class="form-control fw-bold" placeholder="e.g. Manila Hub"></div>
+                    <div class="col-6"><label class="small text-muted fw-bold">DESTINATION</label><input type="text" id="consigneeAddr" class="form-control fw-bold" placeholder="e.g. Davao Hub"></div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label class="small">Total Qty</label><input type="number" id="qty" class="form-control" placeholder="1" value="1"></div>
+                    <div class="col-6"><label class="small">Weight (kg)</label><input type="text" id="weight" class="form-control" placeholder="0"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="fw-bold small text-muted">SPECIAL HANDLING</label>
+                    <select id="handling" class="form-select fw-bold border-warning">
+                        <option value="Standard">Standard (None)</option>
+                        <option value="FRAGILE">⚠️ FRAGILE</option>
+                        <option value="PERISHABLE">🐟 PERISHABLE</option>
+                        <option value="FRAGILE & PERISHABLE">⚠️ FRAGILE & PERISHABLE</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-100 fw-bold" onclick="createParcel()">SAVE & PRINT</button>
+            </div>
+        </div>
+
+        <!-- SCANNER (RESTORED TO ORIGINAL LAYOUT AS REQUESTED) -->
+        <div id="scanner" class="staff-page hidden">
+            <!-- CAMERA -->
+            <div id="reader"></div>
+            
+            <!-- FORM CONTAINER -->
+            <div class="container pb-5">
+                <div class="scan-card">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2">Scan Details</h6>
+                    
+                    <span class="scan-label">DETECTED WAYBILL</span>
+                    <div class="wb-display mb-3" id="detectedWB">&mdash; scan a QR first &mdash;</div>
+                    
+                    <span class="scan-label">STATUS</span>
+                    <select id="newStatus" class="form-select mb-3">
+                        <option value="" disabled selected>Select Status</option>
+                        <option>Picked Up</option>
+                        <option>Departed Origin</option>
+                        <option>In Transit</option>
+                        <option>Arrived at Hub</option>
+                        <option>Departed Hub</option>
+                        <option>Out for Delivery</option>
+                        <option>Delivered</option>
+                        <option>RTS (Return To Sender)</option>
+                    </select>
+                    
+                    <span class="scan-label">CURRENT LOCATION</span>
+                    <select id="currentLocSelect" class="form-select mb-3" onchange="toggleCustomLoc('currentLocSelect','currentLocCustom')">
+                        <option value="" disabled selected>Loading...</option>
+                    </select>
+                    <input type="text" id="currentLocCustom" class="form-control mb-3 hidden" placeholder="Type Custom Location">
+
+                    <span class="scan-label">DESTINATION (NEXT STOP/FINAL)</span>
+                    <select id="destLocSelect" class="form-select mb-3" onchange="toggleCustomLoc('destLocSelect','destLocCustom')">
+                        <option value="" disabled selected>Loading...</option>
+                    </select>
+                    <input type="text" id="destLocCustom" class="form-control mb-3 hidden" placeholder="Type Custom Destination">
+
+                    <button class="btn btn-success w-100 py-3 fw-bold shadow-sm" onclick="updateStatus()">UPDATE STATUS</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tracker" class="staff-page hidden">
+            <div class="card p-4">
+                <h5 class="text-primary fw-bold">Internal Tracker</h5>
+                <div class="input-group mb-3"><input type="text" id="staffTrackInput" class="form-control" placeholder="Waybill No."><button class="btn btn-primary" onclick="staffTrackParcel()">Search</button></div>
+                <div id="staffTrackResult"></div>
+                <div id="reprintSection" class="hidden mt-3 p-3 bg-light border rounded">
+                    <h6 class="fw-bold small text-muted mb-2">REPRINT OPTIONS</h6>
+                    <div class="row g-2 align-items-center">
+                        <div class="col-auto"><small>From:</small></div>
+                        <div class="col"><input type="number" id="rpStart" class="form-control form-control-sm text-center" value="1" min="1"></div>
+                        <div class="col-auto"><small>To:</small></div>
+                        <div class="col"><input type="number" id="rpEnd" class="form-control form-control-sm text-center" value="1" min="1"></div>
+                        <div class="col-12 mt-2"><button class="btn btn-warning w-100 fw-bold btn-sm" onclick="reprintRange()"><i class="fas fa-print me-1"></i> PRINT STICKERS</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="users" class="staff-page hidden">
+            <div class="card p-4 border-danger">
+                <h5 class="text-danger fw-bold">Admin Zone</h5>
+                <button class="btn btn-success w-100 mb-3" onclick="exportToExcel()">Download Report</button>
+                <div class="p-3 bg-light border rounded mb-3"><h6>Create Account</h6><input type="email" id="newEmail" class="form-control mb-2" placeholder="Email"><input type="password" id="newPassword" class="form-control mb-2" placeholder="Password"><button class="btn btn-secondary w-100" onclick="createStaffAccount()">Create</button></div>
+                <div class="p-3 bg-white border rounded border-warning mb-3"><h6 class="text-warning fw-bold">Manage Roles</h6><div class="input-group"><input type="email" id="manageEmail" class="form-control" placeholder="User Email"><button class="btn btn-danger" onclick="setRole('Admin')">Admin</button><button class="btn btn-secondary" onclick="setRole('Staff')">Staff</button></div></div>
+                <div id="logsContainer" class="small text-muted p-2 border bg-white" style="height: 100px; overflow-y: scroll;">Logs...</div>
+            </div>
         </div>
     </div>
 </div>
 
 <div id="printArea"></div>
 
-<!-- FIREBASE -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
 <script type="module">
-    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, updateDoc, addDoc, collection, query, orderBy, where, getDocs, onSnapshot } 
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, collection, addDoc, query, orderBy, limit, getDocs, onSnapshot } 
     from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } 
     from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBoijM1-8mNhcPb8KjcL_ZglJgoNdQLUrk",
-      authDomain: "vg-payroll-system.firebaseapp.com",
-      projectId: "vg-payroll-system",
-      storageBucket: "vg-payroll-system.firebasestorage.app",
-      messagingSenderId: "550694122065",
-      appId: "1:550694122065:web:22f9bc8914349afddd3e70"
+      apiKey: "AIzaSyCrDEUr1O5krXFHEB2hafLXuEumEcoSTxM",
+      authDomain: "vg-cargo-system-3.firebaseapp.com",
+      projectId: "vg-cargo-system-3",
+      storageBucket: "vg-cargo-system-3.firebasestorage.app",
+      messagingSenderId: "819520192535",
+      appId: "1:819520192535:web:8e42b272500f9b60e19c52"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    window.db = db; window.auth = auth; window.doc = doc; window.setDoc = setDoc; window.updateDoc = updateDoc;
-    window.addDoc = addDoc; window.collection = collection; window.query = query; window.orderBy = orderBy; 
-    window.where = where; window.getDocs = getDocs; window.onSnapshot = onSnapshot;
+    window.db = db; window.auth = auth;
+    window.doc = doc; window.setDoc = setDoc; window.getDoc = getDoc; window.updateDoc = updateDoc;
+    window.arrayUnion = arrayUnion; window.collection = collection; window.addDoc = addDoc;
+    window.query = query; window.orderBy = orderBy; window.limit = limit; window.getDocs = getDocs; 
+    window.onSnapshot = onSnapshot;
     window.signInWithEmailAndPassword = signInWithEmailAndPassword; window.signOut = signOut;
     window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-    window.initializeApp = initializeApp; window.deleteApp = deleteApp; window.firebaseConfig = firebaseConfig;
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (user) {
-            document.getElementById('loginOverlay').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-            document.getElementById('userDisplay').innerText = user.email;
-            initApp();
+            document.getElementById('displayEmail').innerText = user.email;
+            window.currentUserEmail = user.email;
+            loadLocations();
+            let role = "Staff"; 
+            if (user.email === "nephiprudencio68@gmail.com") role = "Admin"; 
+            else { try { const d = await getDoc(doc(db, "users", user.email.toLowerCase())); if(d.exists()) role = d.data().role; } catch(e){} }
+            document.getElementById('roleBadge').innerText = role;
+            if (role === "Admin") { document.getElementById('roleBadge').classList.replace('bg-secondary', 'bg-danger'); document.getElementById('adminMenuBtn').classList.remove('hidden'); } 
+            else { document.getElementById('roleBadge').classList.replace('bg-danger', 'bg-secondary'); document.getElementById('adminMenuBtn').classList.add('hidden'); }
+            document.getElementById('publicView').classList.add('hidden'); document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('staffView').classList.remove('hidden'); showPage('create');
         } else {
-            document.getElementById('mainApp').classList.add('hidden');
-            document.getElementById('loginOverlay').classList.remove('hidden');
+            document.getElementById('staffView').classList.add('hidden'); document.getElementById('publicView').classList.remove('hidden');
+            window.currentUserEmail = null;
         }
     });
 </script>
 
 <script>
-    let employees = [];
-    let currentBatchData = [];
-    const holidayModal = new bootstrap.Modal(document.getElementById('holidayModal'));
+    let currentTrackedData = null; let html5QrcodeScanner = null;
 
+    function openLogin() { document.getElementById('loginOverlay').classList.remove('hidden'); }
+    function closeLogin() { document.getElementById('loginOverlay').classList.add('hidden'); }
     async function login() {
-        const e = document.getElementById('loginEmail').value; const p = document.getElementById('loginPass').value;
-        try { await window.signInWithEmailAndPassword(window.auth, e, p); } catch(er) { alert(er.message); }
+        const e = document.getElementById('loginEmail').value.trim(); const p = document.getElementById('loginPass').value.trim();
+        if(!e||!p) return alert("Missing inputs");
+        try { await window.signInWithEmailAndPassword(window.auth, e, p); } catch(err) { alert(err.message); }
     }
-    function logout() { window.signOut(window.auth); }
-    function nav(p) {
-        document.querySelectorAll('.page-section').forEach(d => d.classList.add('hidden'));
-        document.getElementById(`page-${p}`).classList.remove('hidden');
+    function logout() { window.signOut(window.auth).then(() => location.reload()); }
+
+    function showPage(id) {
+        document.querySelectorAll('.staff-page').forEach(d => d.classList.add('hidden'));
+        document.getElementById(id).classList.remove('hidden');
+        if(id === 'scanner') startCamera(); else stopCamera();
+        if(id === 'users') loadLogs();
+        document.getElementById('printArea').innerHTML = '';
+        document.getElementById('printArea').style.display = 'none';
     }
 
-    function initApp() {
-        // Load Employees
-        const q = window.query(window.collection(window.db, "payroll_employees"), window.orderBy("name"));
-        window.onSnapshot(q, (snap) => {
-            employees = []; let branches = new Set(); let html = "";
-            snap.forEach(doc => {
-                let d = doc.data(); d.id = doc.id; employees.push(d); branches.add(d.branch);
-                html += `<tr><td>${d.name}</td><td>${d.branch}</td><td>₱${d.dailyRate}</td><td><button class="btn btn-sm btn-primary" onclick="editEmp('${d.id}')">Edit</button></td></tr>`;
-            });
-            document.getElementById('empTableBody').innerHTML = html;
-            document.getElementById('dashCount').innerText = employees.length;
+    // --- CAMERA LOGIC ---
+    function stopCamera() { if (html5QrcodeScanner) { html5QrcodeScanner.clear(); html5QrcodeScanner = null; } }
+    function startCamera() {
+        stopCamera();
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250, aspectRatio: 1.0 });
+        html5QrcodeScanner.render(onScanSuccess, (e)=>{});
+    }
+    function onScanSuccess(decodedText) {
+        // html5QrcodeScanner.clear(); // Keep camera open? Or stop? Usually better to stop to save battery
+        // Let's stop it for now so they can fill the form
+        html5QrcodeScanner.clear();
+        document.getElementById('detectedWB').innerText = decodedText;
+        // Auto-fill form if needed? For now just show ID
+    }
+
+    // --- LOCATION LOGIC ---
+    function loadLocations() {
+        const defaultHubs = ["MNL HUB (Manila)", "DVO HUB (Davao)", "CEB HUB (Cebu)", "ILO HUB (Iloilo)", "CGY HUB (Cagayan)", "GES HUB (Gensan)", "Rider (On Delivery)", "DELIVERED"];
+        window.onSnapshot(window.doc(window.db, "settings", "locations"), (docSnap) => {
+            let hubs = defaultHubs;
+            if (docSnap.exists() && docSnap.data().list) hubs = docSnap.data().list;
+            if(!hubs.includes("DELIVERED")) hubs.push("DELIVERED");
+            hubs = [...new Set(hubs)].filter(h => h);
             
-            let bOpts = '<option value="All">All Branches</option>';
-            branches.forEach(b => bOpts += `<option value="${b}">${b}</option>`);
-            document.getElementById('batchBranchFilter').innerHTML = bOpts;
-            document.getElementById('histBranchFilter').innerHTML = bOpts;
-        });
-
-        // Load Unique Periods (Batch History Fix)
-        const qB = window.query(window.collection(window.db, "payroll_batches"), window.orderBy("timestamp", "desc"));
-        window.onSnapshot(qB, (snap) => {
-            let uniquePeriods = new Set();
-            let opts = '<option value="">Select Period...</option>';
-            snap.forEach(doc => {
-                let d = doc.data();
-                let label = `${d.periodName} (Cycle ${d.cycle})`;
-                if (!uniquePeriods.has(label)) {
-                    uniquePeriods.add(label);
-                    // Value includes cycle to differentiate 1st/2nd half even if dates overlap
-                    opts += `<option value="${d.periodName}">${label}</option>`;
-                }
-            });
-            document.getElementById('histPeriodFilter').innerHTML = opts;
-        });
-
-        // Dashboard Stats
-        const qRec = window.query(window.collection(window.db, "payroll_records"));
-        window.onSnapshot(qRec, (snap) => {
-            let tNet = 0, tGross = 0, tDed = 0;
-            snap.forEach(doc => { let d=doc.data(); tNet+=parseFloat(d.netPay)||0; tGross+=parseFloat(d.gross)||0; tDed+=parseFloat(d.totalDed)||0; });
-            document.getElementById('dashTotalNet').innerText = "₱"+tNet.toLocaleString(undefined,{minimumFractionDigits:2});
-            document.getElementById('dashTotalGross').innerText = "₱"+tGross.toLocaleString(undefined,{minimumFractionDigits:2});
-            document.getElementById('dashTotalDed').innerText = "₱"+tDed.toLocaleString(undefined,{minimumFractionDigits:2});
+            let options = `<option value="" disabled selected>Select...</option>`;
+            hubs.sort().forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
+            options += `<option value="Other">➕ Add New Location...</option>`;
+            
+            // Populate BOTH dropdowns
+            document.getElementById('currentLocSelect').innerHTML = options;
+            document.getElementById('destLocSelect').innerHTML = options;
         });
     }
 
-    // --- EMPLOYEE CRUD ---
-    async function saveEmployee() {
-        const id = document.getElementById('editEmpId').value;
-        const d = {
-            empID: document.getElementById('empID').value,
-            name: document.getElementById('empName').value,
-            branch: document.getElementById('empBranch').value,
-            position: document.getElementById('empPos').value,
-            dailyRate: parseFloat(document.getElementById('empRate').value),
-            cola: parseFloat(document.getElementById('empCola').value) || 0,
-            sssNo: document.getElementById('empSSS').value,
-            philNo: document.getElementById('empPhil').value,
-            pagNo: document.getElementById('empPag').value,
-            sssAmount: parseFloat(document.getElementById('empSSSVal').value) || 0,
-            philAmount: parseFloat(document.getElementById('empPhilVal').value) || 0,
-            pagAmount: parseFloat(document.getElementById('empPagVal').value) || 0,
-            timestamp: Date.now()
-        };
-        try {
-            if (id) { await window.updateDoc(window.doc(window.db, "payroll_employees", id), d); alert("Updated!"); } 
-            else { await window.addDoc(window.collection(window.db, "payroll_employees"), d); alert("Saved!"); }
-            cancelEdit();
-        } catch(e) { alert(e.message); }
+    function toggleCustomLoc(selectId, inputId) {
+        const select = document.getElementById(selectId);
+        const input = document.getElementById(inputId);
+        if (select.value === "Other") { input.classList.remove('hidden'); input.focus(); } 
+        else { input.classList.add('hidden'); }
     }
 
-    function editEmp(id) {
-        const e = employees.find(x => x.id === id); if(!e) return;
-        document.getElementById('editEmpId').value = id;
-        document.getElementById('empID').value = e.empID || '';
-        document.getElementById('empName').value = e.name;
-        document.getElementById('empBranch').value = e.branch;
-        document.getElementById('empPos').value = e.position;
-        document.getElementById('empRate').value = e.dailyRate;
-        document.getElementById('empCola').value = e.cola || 0;
-        document.getElementById('empSSS').value = e.sssNo || '';
-        document.getElementById('empPhil').value = e.philNo || '';
-        document.getElementById('empPag').value = e.pagNo || '';
-        document.getElementById('empSSSVal').value = e.sssAmount || '';
-        document.getElementById('empPhilVal').value = e.philAmount || '';
-        document.getElementById('empPagVal').value = e.pagAmount || '';
-        document.getElementById('btnSaveEmp').innerText = "Update Record";
-        document.getElementById('btnSaveEmp').classList.replace('btn-success', 'btn-warning');
-        document.getElementById('btnCancelEdit').style.display = 'block';
-        window.scrollTo(0,0);
-    }
-    function cancelEdit(){ document.getElementById('editEmpId').value=""; document.querySelectorAll('#page-employees input').forEach(i=>i.value=""); document.getElementById('btnSaveEmp').innerText="Save Record"; document.getElementById('btnCancelEdit').style.display='none'; }
+    // --- UPDATE STATUS LOGIC (RESTORED FIELDS) ---
+    async function updateStatus(){ 
+        const wb = document.getElementById('detectedWB').innerText;
+        if(wb.includes("scan a QR")) return alert("Please scan a waybill first.");
 
-    // --- PAYROLL CALC ---
-    function loadPayrollTable() {
-        const filter = document.getElementById('batchBranchFilter').value;
-        const cycle = document.getElementById('batchCycle').value;
-        const list = filter === "All" ? employees : employees.filter(e => e.branch === filter);
-        const govState = cycle === "1" ? "disabled style='background:#eee'" : "";
-        let html = "";
-        list.forEach(e => {
-            let sssVal = (cycle === "2") ? (e.sssAmount || 0) : 0;
-            let philVal = (cycle === "2") ? (e.philAmount || 0) : 0;
-            let pagVal = (cycle === "2") ? (e.pagAmount || 0) : 0;
-            html += `<tr class="pay-row" data-id="${e.id}" data-rate="${e.dailyRate}">
-                <td><strong>${e.name}</strong><br><small class="text-muted">${e.position}</small></td>
-                <td>${e.dailyRate}</td>
-                <td><input type="number" class="table-input inp-days" oninput="calcRow(this)" placeholder="Days"></td>
-                <td><input type="number" class="table-input inp-ot" oninput="calcRow(this)" placeholder="Hrs"></td>
-                <td><div class="input-group input-group-sm"><input type="number" class="form-control inp-hol" oninput="calcRow(this)" value="0"><button class="btn btn-outline-secondary" onclick="openHolidayModal('${e.id}')"><i class="fas fa-calendar"></i></button></div><input type="hidden" class="inp-hol-desc"></td>
-                <td class="fw-bold text-primary val-gross">0.00</td>
-                <td><input type="number" class="table-input inp-late" oninput="calcRow(this)" value="0"></td>
-                <td><input type="number" class="table-input inp-sss" oninput="calcRow(this)" value="${sssVal}" ${govState}></td>
-                <td><input type="number" class="table-input inp-phil" oninput="calcRow(this)" value="${philVal}" ${govState}></td>
-                <td><input type="number" class="table-input inp-pag" oninput="calcRow(this)" value="${pagVal}" ${govState}></td>
-                <td><input type="number" class="table-input inp-ca" oninput="calcRow(this)" value="0"></td>
-                <td class="fw-bold text-success val-net">0.00</td>
-            </tr>`;
-        });
-        document.getElementById('payrollTableBody').innerHTML = html;
-        document.querySelectorAll('.pay-row').forEach(row => calcRow(row.querySelector('.inp-days')));
-        updateTotal();
-    }
-    function toggleGovDed() { loadPayrollTable(); }
-
-    function calcRow(el) {
-        if(!el) return;
-        const row = el.closest('tr');
-        const rate = parseFloat(row.dataset.rate);
-        const hourly = rate / 8;
-        const days = parseFloat(row.querySelector('.inp-days').value) || 0;
-        const ot = parseFloat(row.querySelector('.inp-ot').value) || 0;
-        const hol = parseFloat(row.querySelector('.inp-hol').value) || 0;
+        const status = document.getElementById('newStatus').value;
         
-        const basic = days * rate;
-        const otPay = ot * (hourly * 1.25);
-        const gross = basic + otPay + hol;
-        row.querySelector('.val-gross').innerText = gross.toFixed(2);
+        // Handle Current Location
+        let loc = document.getElementById('currentLocSelect').value;
+        if(loc === "Other") loc = document.getElementById('currentLocCustom').value.trim();
+        
+        // Handle Destination Update (Optional)
+        let dest = document.getElementById('destLocSelect').value;
+        if(dest === "Other") dest = document.getElementById('destLocCustom').value.trim();
 
-        const late = parseFloat(row.querySelector('.inp-late').value)||0;
-        const sss = parseFloat(row.querySelector('.inp-sss').value)||0;
-        const phil = parseFloat(row.querySelector('.inp-phil').value)||0;
-        const pag = parseFloat(row.querySelector('.inp-pag').value)||0;
-        const ca = parseFloat(row.querySelector('.inp-ca').value)||0;
-        const totalDed = late + sss + phil + pag + ca;
-        const net = gross - totalDed;
-        row.querySelector('.val-net').innerText = net.toFixed(2);
-        updateTotal();
-    }
-    function updateTotal() {
-        let t = 0; document.querySelectorAll('.val-net').forEach(e => t += parseFloat(e.innerText));
-        document.getElementById('batchTotal').innerText = "₱" + t.toLocaleString(undefined, {minimumFractionDigits: 2});
-    }
+        if(!status || !loc) return alert("Status and Current Location are required.");
 
-    function openHolidayModal(id) { document.getElementById('holEmpId').value = id; document.getElementById('holDesc').value = ""; calcHolidayPreview(); holidayModal.show(); }
-    function calcHolidayPreview() { 
-        const id=document.getElementById('holEmpId').value; const e=employees.find(x=>x.id===id); if(!e)return;
-        const r=parseFloat(e.dailyRate); const t=document.getElementById('holType').value; const d=parseFloat(document.getElementById('holDays').value)||0;
-        let add=0; if(t==='reg_work')add=r*1*d; if(t==='reg_nowork')add=r*1*d; if(t==='spec_work')add=r*0.3*d;
-        document.getElementById('holTotalAdd').innerText=add.toFixed(2);
-    }
-    function applyHolidayPay() {
-        const id=document.getElementById('holEmpId').value; const add=document.getElementById('holTotalAdd').innerText; const desc=document.getElementById('holDesc').value||"Holiday";
-        const row=document.querySelector(`.pay-row[data-id="${id}"]`);
-        if(row){ 
-            const i=row.querySelector('.inp-hol'); const hd=row.querySelector('.inp-hol-desc');
-            i.value=(parseFloat(i.value)+parseFloat(add)).toFixed(2);
-            hd.value=hd.value?`${hd.value}, ${desc}`:desc;
-            calcRow(i);
-        }
-        holidayModal.hide();
-    }
-
-    async function saveBatchPayroll() {
-        const d1 = document.getElementById('periodStart').value; const d2 = document.getElementById('periodEnd').value;
-        if(!d1 || !d2) return alert("Select Dates");
-        const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-        const periodName = `${new Date(d1).toLocaleDateString('en-US', opts)} - ${new Date(d2).toLocaleDateString('en-US', opts)}`;
-        const cycle = document.getElementById('batchCycle').value;
-        if(!confirm(`Save Batch?`)) return;
-
-        try {
-            const ref = await window.addDoc(window.collection(window.db,"payroll_batches"),{periodName,cycle,timestamp:Date.now()});
-            const rows = document.querySelectorAll('.pay-row');
-            for(let row of rows){
-                const net = parseFloat(row.querySelector('.val-net').innerText);
-                if(net>0){
-                    const e=employees.find(x=>x.id===row.dataset.id);
-                    const gross = row.querySelector('.val-gross').innerText;
-                    const totDed = (parseFloat(gross) - net).toFixed(2);
-                    await window.addDoc(window.collection(window.db,"payroll_records"),{
-                        batchId:ref.id, period:periodName, empName:e.name, branch:e.branch, position:e.position,
-                        netPay:net, gross:gross, totalDed:totDed,
-                        rate:e.dailyRate, days:row.querySelector('.inp-days').value,
-                        ot:row.querySelector('.inp-ot').value, hol:row.querySelector('.inp-hol').value,
-                        holDesc: row.querySelector('.inp-hol-desc').value,
-                        late:row.querySelector('.inp-late').value, sss:row.querySelector('.inp-sss').value,
-                        phil:row.querySelector('.inp-phil').value, pag:row.querySelector('.inp-pag').value, ca:row.querySelector('.inp-ca').value,
-                        timestamp:Date.now()
-                    });
-                }
+        try{ 
+            // 1. Update History
+            await window.updateDoc(window.doc(window.db,"parcels",wb), {
+                currentStatus: status,
+                history: window.arrayUnion({
+                    status: status,
+                    location: loc,
+                    time: new Date().toLocaleString(),
+                    user: window.currentUserEmail
+                })
+            });
+            
+            // 2. If Destination Changed, update Main Record
+            if(dest) {
+                await window.updateDoc(window.doc(window.db,"parcels",wb), {
+                    "consignee.addr": dest // Updating destination branch
+                });
             }
-            alert("Saved!"); document.getElementById('payrollTableBody').innerHTML="";
-        } catch(e){alert(e.message);}
+
+            // 3. Save Custom Locations
+            if (loc && !document.getElementById('currentLocSelect').querySelector(`option[value="${loc}"]`)) {
+                 await window.setDoc(window.doc(window.db, "settings", "locations"), { list: window.arrayUnion(loc) }, { merge: true });
+            }
+            if (dest && !document.getElementById('destLocSelect').querySelector(`option[value="${dest}"]`)) {
+                 await window.setDoc(window.doc(window.db, "settings", "locations"), { list: window.arrayUnion(dest) }, { merge: true });
+            }
+
+            alert("Status Updated!"); 
+            logAction("UPDATE", `${wb} -> ${status} at ${loc}`); 
+            
+            // Reset Fields
+            document.getElementById('detectedWB').innerText = "— scan a QR first —";
+            document.getElementById('newStatus').value = "";
+            document.getElementById('currentLocSelect').value = "";
+            document.getElementById('destLocSelect').value = "";
+            startCamera(); // Restart Scanner
+
+        } catch(e) { alert("Error: " + e.message); }
     }
 
-    // --- HISTORY LOAD (UNIFIED FILTER) ---
-    async function loadRecordsByPeriod() {
-        const periodName = document.getElementById('histPeriodFilter').value;
-        if(!periodName) return;
-        const q = window.query(window.collection(window.db,"payroll_records"),window.where("period","==",periodName));
-        const snap = await window.getDocs(q);
-        currentBatchData=[]; 
-        snap.forEach(doc=>{ let d=doc.data(); d.id=doc.id; currentBatchData.push(d); });
-        filterHistoryTable();
+    // --- REPRINT & LAYOUT ---
+    function reprintRange() {
+        if(!currentTrackedData) return;
+        const start = parseInt(document.getElementById('rpStart').value);
+        const end = parseInt(document.getElementById('rpEnd').value);
+        const total = parseInt(currentTrackedData.details.qty);
+        if(start < 1 || end > total || start > end) return alert(`Invalid Range. Max is ${total}.`);
+        generatePrintLayout(currentTrackedData, start, end);
+        setTimeout(() => window.print(), 800);
     }
 
-    function filterHistoryTable() {
-        const branch = document.getElementById('histBranchFilter').value;
-        const tableBody = document.getElementById('historyTableBody');
-        let filtered = branch==="All" ? currentBatchData : currentBatchData.filter(d=>d.branch===branch);
-        let html="";
-        if(filtered.length===0){html="<tr><td colspan='4' class='text-center'>No records found</td></tr>";}
-        else{
-            filtered.forEach(d=>{ html+=`<tr><td>${d.empName}</td><td>${d.branch}</td><td>₱${d.netPay}</td><td><button class="btn btn-sm btn-info text-white" onclick="printOne('${d.id}')">Print</button></td></tr>`; });
+    function generatePrintLayout(data, startNum, endNum) {
+        const printArea = document.getElementById('printArea');
+        printArea.innerHTML = ""; printArea.style.display = 'flex';
+        
+        let destinationCode = "DOM";
+        const dest = data.consignee.addr.toUpperCase();
+        if(dest.includes("DAVAO")) destinationCode = "DVO";
+        else if(dest.includes("MANILA") || dest.includes("MNL")) destinationCode = "MNL";
+        else if(dest.includes("CEBU")) destinationCode = "CEB";
+        else if(dest.includes("ILOILO")) destinationCode = "ILO";
+        else if(dest.includes("CAGAYAN") || dest.includes("CDO")) destinationCode = "CGY";
+        else if(dest.includes("GENSAN")) destinationCode = "GES";
+
+        const totalPcs = parseInt(data.details.qty) || 1;
+        const handling = data.details.handling || "Standard";
+        const showWarning = (handling !== "Standard") ? "show" : "";
+
+        for (let i = startNum; i <= endNum; i++) {
+            const sticker = document.createElement('div');
+            sticker.className = 'sticker-page';
+            
+            sticker.innerHTML = `
+                <div class="wb-header">
+                    <div class="wb-brand-box">
+                        <img src="logo.png" class="wb-logo" onerror="this.style.display='none'">
+                        <span class="wb-company-text">VG FREIGHTAGE DOMESTIC</span>
+                    </div>
+                    <span class="wb-date">${new Date().toLocaleDateString()}</span>
+                </div>
+                
+                <div class="wb-sort-zone">${destinationCode}</div>
+                <div class="wb-warning-banner ${showWarning}">${handling}</div>
+                
+                <div class="wb-qr-section">
+                    <div class="wb-id-box">
+                        <div class="wb-id-label">WAYBILL NUMBER</div>
+                        <div class="wb-id-text">${data.waybill}</div>
+                    </div>
+                    <div id="qr-${data.waybill}-${i}" class="wb-qr-code"></div>
+                </div>
+                
+                <div class="wb-sender">
+                    <strong>FROM:</strong><br>
+                    ${data.shipper.addr}
+                </div>
+                
+                <div class="wb-receiver">
+                    <div class="wb-tag">DESTINATION</div>
+                    <div class="wb-rcv-name">${data.consignee.addr}</div>
+                </div>
+                
+                <div class="wb-footer">
+                    <div class="wb-f-item"><div class="wb-f-lbl">WEIGHT</div><div class="wb-f-val">${data.details.weight}</div></div>
+                    <div class="wb-f-item"><div class="wb-f-lbl">PCS</div><div class="wb-f-val">${i}/${totalPcs}</div></div>
+                    <div class="wb-f-item" style="font-size:8px;">Sign Here</div>
+                </div>
+            `;
+            printArea.appendChild(sticker);
+            new QRCode(document.getElementById(`qr-${data.waybill}-${i}`), { text: data.waybill, width: 140, height: 140 });
         }
-        tableBody.innerHTML=html;
-    }
-
-    function printFiltered(type) {
-        const branch = document.getElementById('histBranchFilter').value;
-        let data = branch==="All"?currentBatchData:currentBatchData.filter(x=>x.branch===branch);
-        if(!data||data.length===0)return alert("No records");
-        document.getElementById('printArea').innerHTML="";
-        if(type==='payslip') generatePayslips(data); else generateSummary(data);
-        setTimeout(()=>window.print(),1000);
     }
     
-    function printOne(id){
-        const d = currentBatchData.find(x=>x.id===id); generatePayslips([d]); setTimeout(()=>window.print(),1000);
+    function generateRandomWB(){ document.getElementById('wbInput').value="VG-"+Math.floor(100000+Math.random()*900000); }
+    
+    async function createParcel(){
+        const wb=document.getElementById('wbInput').value;
+        const d={
+            waybill:wb,
+            shipper:{ name: "Branch", addr: document.getElementById('shipperAddr').value, contact: "" }, // Origin
+            consignee:{ name: "Branch", addr: document.getElementById('consigneeAddr').value, contact: "" }, // Destination
+            details:{
+                qty:document.getElementById('qty').value,
+                weight:document.getElementById('weight').value,
+                handling:document.getElementById('handling').value
+            },
+            currentStatus:"Accepted",
+            createdBy:window.currentUserEmail,
+            history:[{status:"Accepted",location:"Origin",time:new Date().toLocaleString(),user:window.currentUserEmail}]
+        };
+        if(!d.shipper.addr || !d.consignee.addr) return alert("Fill Branches");
+        try{ await window.setDoc(window.doc(window.db,"parcels",wb),d); logAction("CREATE",wb); generatePrintLayout(d, 1, parseInt(d.details.qty)); setTimeout(()=>window.print(),800); }catch(e){alert("Error");}
     }
 
-    function generatePayslips(data) {
-        let html="";
-        data.forEach(d=>{
-            const half = (title) => `
-            <div class="payslip-half ${title==='EMPLOYEE COPY'?'payslip-left':''}">
-                <div class="ps-header">
-                    <div class="ps-title">VG FREIGHTAGE DOMESTIC</div>
-                    <div>Payslip: ${d.period}</div>
-                </div>
-                <div class="ps-info"><strong>${d.empName}</strong><br>${d.position} | ${d.branch}</div>
-                <div class="ps-grid">
-                    <div class="ps-col"><div class="ps-box"><strong>EARNINGS</strong>
-                        <div class="ps-row"><span>Basic (${d.days}d)</span><span>${(d.days*d.rate).toFixed(2)}</span></div>
-                        <div class="ps-row"><span>OT</span><span>${((d.rate/8)*1.25*d.ot).toFixed(2)}</span></div>
-                        <div class="ps-row"><span>Holiday</span><span>${d.hol}</span></div><small>${d.holDesc||''}</small>
-                        <div style="border-top:1px solid #000; font-weight:bold;"><span>GROSS</span> <span>${d.gross}</span></div>
-                    </div></div>
-                    <div class="ps-col"><div class="ps-box"><strong>DEDUCTIONS</strong>
-                        <div class="ps-row"><span>Late</span><span>${d.late}</span></div>
-                        <div class="ps-row"><span>SSS</span><span>${d.sss}</span></div>
-                        <div class="ps-row"><span>PhilH</span><span>${d.phil}</span></div>
-                        <div class="ps-row"><span>PagI</span><span>${d.pag}</span></div>
-                        <div class="ps-row"><span>CA</span><span>${d.ca}</span></div>
-                        <div style="border-top:1px solid #000; font-weight:bold;"><span>TOTAL</span> <span>${d.totalDed}</span></div>
-                    </div></div>
-                </div>
-                <div class="ps-net">NET PAY: PHP ${parseFloat(d.netPay).toFixed(2)}</div>
-                <div class="ps-footer">Received by: __________________________ <span class="copy-tag">${title}</span></div>
-            </div>`;
-            html += `<div class="payslip-wrapper">${half('EMPLOYEE COPY')}${half('COMPANY COPY')}</div>`;
-        });
-        document.getElementById('printArea').innerHTML=html;
+    async function publicTrack(){ trackLogic(document.getElementById('publicSearchInput').value.trim(), document.getElementById('publicResult')); }
+    async function staffTrackParcel(){ 
+        const wb=document.getElementById('staffTrackInput').value.trim(); const r=document.getElementById('staffTrackResult'); 
+        document.getElementById('reprintSection').classList.add('hidden'); 
+        const d=await trackLogic(wb,r); 
+        if(d){ 
+            currentTrackedData=d; 
+            document.getElementById('reprintSection').classList.remove('hidden'); 
+            document.getElementById('rpEnd').value = d.details.qty;
+        } 
     }
-
-    function generateSummary(data) {
-        let rows=""; let tNet=0;
-        data.forEach(d=>{ tNet+=parseFloat(d.netPay); rows+=`<tr><td>${d.empName}</td><td>${d.position}</td><td>${d.gross}</td><td>${d.totalDed}</td><td>${d.netPay}</td></tr>`; });
-        document.getElementById('printArea').innerHTML=`<div class="rpt-header"><div class="rpt-title">PAYROLL SUMMARY</div><div>${data[0].period} | ${document.getElementById('histBranchFilter').value}</div></div><table class="rpt-table"><thead><tr><th>Name</th><th>Pos</th><th>Gross</th><th>Ded</th><th>Net</th></tr></thead><tbody>${rows}</tbody><tfoot><tr class="rpt-total"><td colspan="4" align="right">TOTAL</td><td>${tNet.toFixed(2)}</td></tr></tfoot></table>`;
-    }
-
-    window.createStaffAccount = async function() { /*...*/ }
-    window.setRole = async function(r) { /*...*/ }
-    window.nav = nav; window.login = login; window.logout = logout; window.saveEmployee = saveEmployee; window.editEmp = editEmp; window.cancelEdit = cancelEdit; window.loadPayrollTable = loadPayrollTable; window.toggleGovDed = toggleGovDed; window.calcRow = calcRow; window.saveBatchPayroll = saveBatchPayroll; window.loadRecordsByPeriod = loadRecordsByPeriod; window.filterHistoryTable = filterHistoryTable; window.printFiltered = printFiltered; window.printOne = printOne;
-    window.openHolidayModal = openHolidayModal; window.applyHolidayPay = applyHolidayPay; window.calcHolidayPreview = calcHolidayPreview;
+    
+    async function trackLogic(wb, c){ if(!wb)return alert("Enter Waybill"); c.innerHTML="Loading..."; try{ const s=await window.getDoc(window.doc(window.db,"parcels",wb)); if(!s.exists()){c.innerHTML="Not Found";return null;} const d=s.data(); let h=""; d.history.reverse().forEach(x=>{h+=`<div class="timeline-item"><strong>${x.status}</strong><br><small>${x.location}</small><br><span class="text-muted" style="font-size:10px">${x.time}</span></div>`}); c.innerHTML=`<div class="col-md-8 mx-auto"><div class="card border-primary mb-3"><div class="card-header bg-primary text-white d-flex justify-content-between"><strong>${d.waybill}</strong> <span class="badge bg-light text-primary">${d.currentStatus}</span></div><div class="card-body"><div class="row g-3"><div class="col-6 border-end"><div class="track-label">Origin</div><div class="track-val mb-1">${d.shipper.addr}</div></div><div class="col-6"><div class="track-label">Destination</div><div class="track-val mb-1 text-primary">${d.consignee.addr}</div></div></div><hr><div class="row text-center"><div class="col-4"><div class="track-label">Qty</div><div class="track-val">${d.details.qty}</div></div><div class="col-4"><div class="track-label">Weight</div><div class="track-val">${d.details.weight}</div></div><div class="col-4"><div class="track-label">Encoder</div><div class="track-val">${d.createdBy || 'Admin'}</div></div></div></div></div><h6 class="fw-bold mt-4">History</h6><ul class="list-group border rounded">${h}</ul></div>`; return d; }catch(e){c.innerHTML="Error";return null;} }
+    async function createStaffAccount(){ let e=document.getElementById('newEmail').value.trim().toLowerCase(); const p=document.getElementById('newPassword').value.trim(); if(!e||!p)return alert("Fill all"); if(confirm("Create user?")){ try{ await window.createUserWithEmailAndPassword(window.auth,e,p); await window.setDoc(window.doc(window.db,"users",e),{email:e,role:"Staff",createdBy:window.currentUserEmail}); alert("Created."); }catch(err){alert(err.message);} } }
+    async function setRole(r){ let e=document.getElementById('manageEmail').value.trim().toLowerCase(); if(!e)return alert("Enter Email"); try{ await window.setDoc(window.doc(window.db,"users",e),{email:e,role:r},{merge:true}); alert(`Set ${e} to ${r}`); logAction("ROLE",`${e}->${r}`); }catch(err){alert(err.message);} }
+    async function logAction(a,d){ try{await window.addDoc(window.collection(window.db,"logs"),{timestamp:new Date().toLocaleString(),user:window.currentUserEmail,action:a,details:d});loadLogs();}catch(e){} }
+    async function loadLogs(){ try{const q=window.query(window.collection(window.db,"logs"),window.orderBy("timestamp","desc"),window.limit(20));const s=await window.getDocs(q);let h="";s.forEach(d=>{const l=d.data();h+=`<div class="border-bottom p-1"><strong>${l.action}</strong> ${l.details}<br><span style="font-size:9px">${l.timestamp} by ${l.user}</span></div>`});document.getElementById('logsContainer').innerHTML=h;}catch(e){} }
+    async function exportToExcel() { const btn = document.querySelector('button[onclick="exportToExcel()"]'); const origText = btn.innerText; btn.innerText = "Downloading Data..."; btn.disabled = true; try { const q = window.query(window.collection(window.db, "parcels"), window.orderBy("waybill", "desc")); const querySnapshot = await window.getDocs(q); if (querySnapshot.empty) { alert("No data."); btn.innerText = origText; btn.disabled = false; return; } let csvContent = "Waybill,Status,Origin,Destination,Qty,Weight,Encoded By,Handling,Latest Update\n"; querySnapshot.forEach(doc => { const d = doc.data(); const clean = (text) => text ? `"${text.toString().replace(/"/g, '""')}"` : ""; const lastHist = d.history && d.history.length > 0 ? d.history[d.history.length - 1] : { time: '', location: '' }; const lastUpdate = `${lastHist.status} at ${lastHist.location} (${lastHist.time})`; csvContent += `${clean(d.waybill)},${clean(d.currentStatus)},${clean(d.shipper.addr)},${clean(d.consignee.addr)},${clean(d.details.qty)},${clean(d.details.weight)},${clean(d.createdBy)},${clean(d.details.handling)},${clean(lastUpdate)}\n`; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `VG_Cargo_Report_${new Date().toLocaleDateString()}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch (e) { alert("Export Failed: " + e.message); } btn.innerText = origText; btn.disabled = false; }
+    
+    window.login=login;window.logout=logout;window.openLogin=openLogin;window.closeLogin=closeLogin;
+    window.publicTrack=publicTrack;window.showPage=showPage;window.createParcel=createParcel;window.generateRandomWB=generateRandomWB;
+    window.staffTrackParcel=staffTrackParcel;window.updateStatus=updateStatus;window.resetScan=resetScan;
+    window.createStaffAccount=createStaffAccount;window.setRole=setRole;window.exportToExcel=exportToExcel;
+    window.toggleCustomLoc=toggleCustomLoc;
+    window.loadLocations=loadLocations;
+    window.reprintRange=reprintRange;
 </script>
 </body>
 </html>
