@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VG Freightage Domestic System</title>
+    <title>VG Freightage Admin</title>
     
-    <!-- CSS Framework -->
+    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
@@ -15,46 +15,28 @@
         body { background-color: #f8f9fa; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
         :root { --vg-blue: #001f60; --vg-green: #00c853; --vg-red: #d32f2f; }
 
-        /* UI Styles */
         .navbar { background-color: white; border-bottom: 3px solid var(--vg-blue); }
-        .navbar-brand { display: flex; align-items: center; }
-        .navbar-brand img { height: 40px; margin-right: 10px; }
-        
         .hero-section { background: linear-gradient(135deg, var(--vg-blue) 0%, #000c24 100%); color: white; padding: 40px 20px; text-align: center; border-radius: 0 0 20px 20px; margin-bottom: 30px; }
-        .search-box { max-width: 600px; margin: 0 auto; background: white; padding: 8px; border-radius: 50px; display: flex; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; box-sizing: border-box; }
-        .search-input { border: none; flex-grow: 1; padding: 10px 20px; font-size: 1.1rem; outline: none; border-radius: 50px; width: 100%; }
-        .search-btn { background-color: var(--vg-green); color: white; border: none; padding: 10px 30px; border-radius: 50px; font-weight: bold; transition: 0.3s; white-space: nowrap; }
         
-        @media (max-width: 576px) {
-            .navbar-brand span { font-size: 1rem; }
-            .hero-section { padding: 30px 15px; }
-            .search-box { background: transparent; box-shadow: none; flex-direction: column; padding: 0; }
-            .search-input { background: white; margin-bottom: 10px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-            .search-btn { width: 100%; padding: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        }
-
+        /* SCANNER FIXES */
+        #reader { width: 100%; border-radius: 10px; overflow: hidden; background: black; min-height: 300px; }
+        #reader video { object-fit: cover; border-radius: 10px; }
+        
         .btn-menu { height: 90px; border: 1px solid #eee; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .icon-box { color: var(--vg-blue); margin-bottom: 5px; }
         .card { border-top: 5px solid var(--vg-green); border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .hidden { display: none !important; }
-        
-        .timeline-item { border-left: 2px solid var(--vg-blue); padding-left: 20px; padding-bottom: 20px; position: relative; }
-        .timeline-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--vg-blue); }
-        .timeline-item:last-child { border-left: none; }
 
         #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 31, 96, 0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
         .login-box { background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 350px; text-align: center; }
 
-        /* SCANNER CAMERA FIX */
-        #reader { width: 100%; min-height: 300px; background: #000; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
-
-        /* PRINT STYLES */
+        /* AIRLINE TICKET STYLE */
         #printArea { display: none; }
         @media print {
             #publicView, #staffView, #loginOverlay, .navbar { display: none !important; }
             #printArea { display: block !important; width: 100%; margin: 0; padding: 0; }
             @page { size: 100mm 150mm; margin: 0; }
-            .sticker-page { width: 100mm; height: 149mm; margin: 0 auto; border: 2px solid black; background: white; color: black; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; box-sizing: border-box; padding: 0; page-break-after: always; break-after: always; page-break-inside: avoid; overflow: hidden; }
+            .sticker-page { width: 100mm; height: 149mm; margin: 0 auto; border: 4px solid black; background: white; color: black; font-family: 'Oswald', sans-serif; display: flex; flex-direction: column; box-sizing: border-box; padding: 0; page-break-after: always; break-after: always; page-break-inside: avoid; overflow: hidden; }
             .wb-header { display: flex; align-items: center; justify-content: space-between; padding: 5px 8px; border-bottom: 2px solid black; background: #eee; -webkit-print-color-adjust: exact; }
             .wb-brand-box { display: flex; align-items: center; gap: 5px; }
             .wb-logo { height: 20px; }
@@ -66,7 +48,7 @@
             .wb-qr-section { display: flex; justify-content: space-between; align-items: center; padding: 5px 8px; border-bottom: 2px solid black; }
             .wb-id-box { text-align: left; }
             .wb-id-label { font-size: 8px; color: #555; font-weight: bold; text-transform: uppercase; }
-            .wb-id-text { font-size: 26px; font-weight: 900; letter-spacing: 1px; font-family: 'Oswald', sans-serif; }
+            .wb-id-text { font-size: 28px; font-weight: 900; letter-spacing: 1px; font-family: 'Oswald', sans-serif; }
             .wb-qr-code { padding: 0; } 
             .wb-sender { padding: 8px; border-bottom: 1px solid black; font-size: 11px; line-height: 1.2; }
             .wb-receiver { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
@@ -76,7 +58,7 @@
             .wb-footer { display: flex; border-top: 3px solid black; height: 50px; }
             .wb-f-item { flex: 1; border-right: 2px solid black; display: flex; flex-direction: column; align-items: center; justify-content: center; }
             .wb-f-item:last-child { border-right: none; }
-            .wb-f-lbl { font-size: 9px; font-weight: bold; text-transform: uppercase; }
+            .wb-f-lbl { font-size: 8px; font-weight: bold; text-transform: uppercase; }
             .wb-f-val { font-size: 18px; font-weight: 900; }
         }
     </style>
@@ -91,7 +73,6 @@
         <input type="email" id="loginEmail" class="form-control mb-2" placeholder="Email">
         <input type="password" id="loginPass" class="form-control mb-3" placeholder="Password">
         <button class="btn btn-primary w-100" onclick="login()">LOGIN</button>
-        <button class="btn btn-link text-muted btn-sm" onclick="closeLogin()">Cancel</button>
     </div>
 </div>
 
@@ -100,7 +81,7 @@
     <nav class="navbar shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="logo.png" alt="VG" onerror="this.onerror=null; this.src='https://cdn-icons-png.flaticon.com/512/754/754769.png'; this.style.height='35px';">
+                <img src="logo.png" alt="VG" onerror="this.style.display='none'">
                 <span class="brand-text fw-bold" style="color:var(--vg-blue)">VG FREIGHTAGE</span>
             </a>
             <button class="btn btn-outline-secondary btn-sm ms-auto" onclick="openLogin()"><i class="fas fa-lock"></i> Staff</button>
@@ -108,9 +89,11 @@
     </nav>
     <div class="hero-section">
         <h2 class="fw-bold mb-2">Track Your Package</h2>
-        <div class="search-box">
-            <input type="text" id="publicSearchInput" class="search-input" placeholder="Enter Waybill No.">
-            <button class="search-btn" onclick="publicTrack()">TRACK</button>
+        <div class="d-flex justify-content-center">
+            <div style="max-width:500px; width:100%;">
+                <input type="text" id="publicSearchInput" class="form-control form-control-lg text-center fw-bold mb-2" placeholder="Enter Waybill No.">
+                <button class="btn btn-success w-100 fw-bold" onclick="publicTrack()">TRACK NOW</button>
+            </div>
         </div>
     </div>
     <div class="container"><div id="publicResult" class="row justify-content-center"></div></div>
@@ -141,27 +124,19 @@
             </div>
         </div>
 
+        <!-- CREATE TAB -->
         <div id="create" class="staff-page hidden">
             <div class="card p-4">
                 <h5 class="text-primary fw-bold mb-3">Create Waybill</h5>
                 <div class="input-group mb-3"><input type="text" id="wbInput" class="form-control fw-bold"><button class="btn btn-secondary" onclick="generateRandomWB()">Auto</button></div>
-                
                 <div class="row g-2 mb-3">
-                    <div class="col-6">
-                        <label class="small text-muted fw-bold">ORIGIN BRANCH</label>
-                        <input type="text" id="shipperAddr" class="form-control fw-bold" placeholder="e.g. Manila Hub">
-                    </div>
-                    <div class="col-6">
-                        <label class="small text-muted fw-bold">DESTINATION BRANCH</label>
-                        <input type="text" id="consigneeAddr" class="form-control fw-bold" placeholder="e.g. Davao Hub">
-                    </div>
+                    <div class="col-6"><label class="small text-muted fw-bold">ORIGIN</label><input type="text" id="shipperAddr" class="form-control fw-bold" placeholder="e.g. Manila Hub"></div>
+                    <div class="col-6"><label class="small text-muted fw-bold">DESTINATION</label><input type="text" id="consigneeAddr" class="form-control fw-bold" placeholder="e.g. Davao Hub"></div>
                 </div>
-                
                 <div class="row g-2 mb-3">
                     <div class="col-6"><label class="small">Total Qty</label><input type="number" id="qty" class="form-control" placeholder="1" value="1"></div>
                     <div class="col-6"><label class="small">Weight (kg)</label><input type="text" id="weight" class="form-control" placeholder="0"></div>
                 </div>
-                
                 <div class="mb-3">
                     <label class="fw-bold small text-muted">SPECIAL HANDLING</label>
                     <select id="handling" class="form-select fw-bold border-warning">
@@ -171,44 +146,46 @@
                         <option value="FRAGILE & PERISHABLE">⚠️ FRAGILE & PERISHABLE</option>
                     </select>
                 </div>
-
                 <button class="btn btn-primary w-100 fw-bold" onclick="createParcel()">SAVE & PRINT</button>
             </div>
         </div>
 
-        <!-- SCANNER SECTION (UPDATED CAMERA LOGIC) -->
+        <!-- SCANNER TAB (FIXED CAMERA & LOGIC) -->
         <div id="scanner" class="staff-page hidden">
             <div class="card p-4">
                 <h5 class="text-primary fw-bold">Scanner</h5>
-                <!-- Camera Container -->
+                
+                <!-- CAMERA BOX -->
                 <div id="reader"></div>
                 
+                <!-- ACTION AREA -->
                 <div id="scanAction" class="hidden mt-3">
-                    <div class="alert alert-info">Detected: <strong id="detectedWB"></strong></div>
+                    <div class="alert alert-info py-2 text-center mb-2">
+                        WAYBILL: <strong id="detectedWB" class="text-dark">...</strong>
+                    </div>
                     
                     <label class="fw-bold small text-muted">CURRENT LOCATION / ACTION</label>
-                    <select id="currentLocSelect" class="form-select mb-2" onchange="toggleCustomLoc()">
-                        <option value="" disabled selected>Select...</option>
+                    <!-- DYNAMIC DROPDOWN -->
+                    <select id="currentLocSelect" class="form-select mb-2 fw-bold border-primary" onchange="toggleCustomLoc()" style="font-size:1.1rem; padding:10px;">
+                        <option value="" disabled selected>Loading...</option>
                     </select>
                     
                     <input type="text" id="currentLocCustom" class="form-control mb-2 hidden" placeholder="Type NEW Location Name">
-                    <small id="customLocNote" class="text-success hidden mb-2" style="font-size:0.8rem"><i class="fas fa-check-circle"></i> Will be saved to list.</small>
-
-                    <button class="btn btn-success w-100" onclick="updateStatus()">UPDATE & SAVE</button>
-                    <button class="btn btn-secondary w-100 mt-1" onclick="resetScan()">Cancel</button>
+                    
+                    <button class="btn btn-success w-100 py-2 fw-bold" onclick="updateStatus()">
+                        <i class="fas fa-check-circle"></i> UPDATE NOW
+                    </button>
+                    <button class="btn btn-secondary w-100 mt-2 btn-sm" onclick="resetScan()">Cancel</button>
                 </div>
             </div>
         </div>
 
-        <!-- TRACKER WITH REPRINT SELECTOR -->
+        <!-- TRACKER TAB -->
         <div id="tracker" class="staff-page hidden">
             <div class="card p-4">
                 <h5 class="text-primary fw-bold">Internal Tracker</h5>
                 <div class="input-group mb-3"><input type="text" id="staffTrackInput" class="form-control" placeholder="Waybill No."><button class="btn btn-primary" onclick="staffTrackParcel()">Search</button></div>
-                
                 <div id="staffTrackResult"></div>
-                
-                <!-- REPRINT CONTROLS -->
                 <div id="reprintSection" class="hidden mt-3 p-3 bg-light border rounded">
                     <h6 class="fw-bold small text-muted mb-2">REPRINT OPTIONS</h6>
                     <div class="row g-2 align-items-center">
@@ -216,28 +193,19 @@
                         <div class="col"><input type="number" id="rpStart" class="form-control form-control-sm text-center" value="1" min="1"></div>
                         <div class="col-auto"><small>To:</small></div>
                         <div class="col"><input type="number" id="rpEnd" class="form-control form-control-sm text-center" value="1" min="1"></div>
-                        <div class="col-12 mt-2">
-                            <button class="btn btn-warning w-100 fw-bold btn-sm" onclick="reprintRange()">
-                                <i class="fas fa-print me-1"></i> PRINT STICKERS
-                            </button>
-                        </div>
+                        <div class="col-12 mt-2"><button class="btn btn-warning w-100 fw-bold btn-sm" onclick="reprintRange()"><i class="fas fa-print me-1"></i> PRINT STICKERS</button></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- ADMIN TAB -->
         <div id="users" class="staff-page hidden">
             <div class="card p-4 border-danger">
                 <h5 class="text-danger fw-bold">Admin Zone</h5>
                 <button class="btn btn-success w-100 mb-3" onclick="exportToExcel()">Download Report</button>
-                <div class="p-3 bg-light border rounded mb-3">
-                    <h6>Create Account</h6>
-                    <input type="email" id="newEmail" class="form-control mb-2" placeholder="Email"><input type="password" id="newPassword" class="form-control mb-2" placeholder="Password"><button class="btn btn-secondary w-100" onclick="createStaffAccount()">Create</button>
-                </div>
-                <div class="p-3 bg-white border rounded border-warning mb-3">
-                    <h6 class="text-warning fw-bold">Manage Roles</h6>
-                    <div class="input-group"><input type="email" id="manageEmail" class="form-control" placeholder="User Email"><button class="btn btn-danger" onclick="setRole('Admin')">Admin</button><button class="btn btn-secondary" onclick="setRole('Staff')">Staff</button></div>
-                </div>
+                <div class="p-3 bg-light border rounded mb-3"><h6>Create Account</h6><input type="email" id="newEmail" class="form-control mb-2" placeholder="Email"><input type="password" id="newPassword" class="form-control mb-2" placeholder="Password"><button class="btn btn-secondary w-100" onclick="createStaffAccount()">Create</button></div>
+                <div class="p-3 bg-white border rounded border-warning mb-3"><h6 class="text-warning fw-bold">Manage Roles</h6><div class="input-group"><input type="email" id="manageEmail" class="form-control" placeholder="User Email"><button class="btn btn-danger" onclick="setRole('Admin')">Admin</button><button class="btn btn-secondary" onclick="setRole('Staff')">Staff</button></div></div>
                 <div id="logsContainer" class="small text-muted p-2 border bg-white" style="height: 100px; overflow-y: scroll;">Logs...</div>
             </div>
         </div>
@@ -256,6 +224,7 @@
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword } 
     from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
+    // *** FIREBASE CONFIG ***
     const firebaseConfig = {
       apiKey: "AIzaSyCrDEUr1O5krXFHEB2hafLXuEumEcoSTxM",
       authDomain: "vg-cargo-system-3.firebaseapp.com",
@@ -281,13 +250,16 @@
         if (user) {
             document.getElementById('displayEmail').innerText = user.email;
             window.currentUserEmail = user.email;
-            loadLocations();
+            loadLocations(); // START LISTENING FOR LOCATIONS
+            
             let role = "Staff"; 
             if (user.email === "nephiprudencio68@gmail.com") role = "Admin"; 
             else { try { const d = await getDoc(doc(db, "users", user.email.toLowerCase())); if(d.exists()) role = d.data().role; } catch(e){} }
+            
             document.getElementById('roleBadge').innerText = role;
             if (role === "Admin") { document.getElementById('roleBadge').classList.replace('bg-secondary', 'bg-danger'); document.getElementById('adminMenuBtn').classList.remove('hidden'); } 
             else { document.getElementById('roleBadge').classList.replace('bg-danger', 'bg-secondary'); document.getElementById('adminMenuBtn').classList.add('hidden'); }
+            
             document.getElementById('publicView').classList.add('hidden'); document.getElementById('loginOverlay').classList.add('hidden');
             document.getElementById('staffView').classList.remove('hidden'); showPage('create');
         } else {
@@ -312,7 +284,8 @@
     function showPage(id) {
         document.querySelectorAll('.staff-page').forEach(d => d.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
-        // Manage Scanner Camera
+        
+        // CAMERA HANDLING
         if(id === 'scanner') startCamera(); 
         else stopCamera();
         
@@ -321,56 +294,61 @@
         document.getElementById('printArea').style.display = 'none';
     }
 
-    // --- CAMERA FIX: STOP PREVIOUS INSTANCE ---
+    // --- CAMERA FUNCTIONS (FIXED) ---
     function stopCamera() {
         if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear().catch(err => console.log("Stop failed", err));
+            html5QrcodeScanner.clear().catch(e => console.log(e));
             html5QrcodeScanner = null;
         }
     }
 
     function startCamera() {
-        stopCamera(); // Ensure clean slate
+        stopCamera();
         html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
             fps: 10, 
             qrbox: 250,
             aspectRatio: 1.0
         });
-        html5QrcodeScanner.render(onScanSuccess, onScanError);
+        html5QrcodeScanner.render(onScanSuccess, (err) => {});
     }
 
     function onScanSuccess(decodedText) {
-        // Stop scanning upon success
+        // SUCCESS: STOP SCANNING & SHOW FORM
         html5QrcodeScanner.clear();
         document.getElementById('scanAction').classList.remove('hidden');
         document.getElementById('detectedWB').innerText = decodedText;
-    }
-
-    function onScanError(errorMessage) {
-        // Just ignore errors to avoid console spam
     }
 
     function resetScan() {
         document.getElementById('scanAction').classList.add('hidden');
         document.getElementById('currentLocSelect').value = "";
         document.getElementById('currentLocCustom').classList.add('hidden');
-        document.getElementById('customLocNote').classList.add('hidden');
         
-        // Restart Camera for next scan
+        // RESTART SCANNING
         startCamera();
     }
 
-    // --- LOCATION LOGIC ---
+    // --- DYNAMIC LOCATION SYSTEM ---
     function loadLocations() {
         const select = document.getElementById('currentLocSelect');
-        const defaultHubs = ["MNL HUB (Manila)", "DVO HUB (Davao)", "CEB HUB (Cebu)", "ILO HUB (Iloilo)", "CGY HUB (Cagayan)", "GES HUB (Gensan)", "Rider (On Delivery)"];
-        window.onSnapshot(window.doc(window.db, "settings", "locations"), (docSnap) => {
+        const defaultHubs = ["MNL HUB (Manila)", "DVO HUB (Davao)", "CEB HUB (Cebu)", "ILO HUB (Iloilo)", "CGY HUB (Cagayan)", "GES HUB (Gensan)", "Rider (On Delivery)", "DELIVERED"];
+
+        // Listen to Database
+        window.onSnapshot(window.doc(window.db, "settings", "locations"), 
+        (docSnap) => {
             let hubs = defaultHubs;
             if (docSnap.exists() && docSnap.data().list) hubs = docSnap.data().list;
+            
+            // Ensure essentials exist
             if(!hubs.includes("DELIVERED")) hubs.push("DELIVERED");
-            hubs = [...new Set(hubs)].filter(h => h);
-            let options = `<option value="" disabled selected>Select Action / Location...</option>`;
-            hubs.sort().forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
+            if(!hubs.includes("Rider (On Delivery)")) hubs.push("Rider (On Delivery)");
+
+            hubs = [...new Set(hubs)].filter(h => h); // Clean list
+
+            let options = `<option value="" disabled selected>Select Location / Action...</option>`;
+            hubs.sort().forEach(hub => {
+                options += `<option value="${hub}">${hub}</option>`;
+            });
             options += `<option value="Other">➕ Add New Location...</option>`;
             select.innerHTML = options;
         });
@@ -379,41 +357,59 @@
     function toggleCustomLoc() {
         const select = document.getElementById('currentLocSelect');
         const customInput = document.getElementById('currentLocCustom');
-        const note = document.getElementById('customLocNote');
-        if (select.value === "Other") { customInput.classList.remove('hidden'); note.classList.remove('hidden'); customInput.focus(); } else { customInput.classList.add('hidden'); note.classList.add('hidden'); }
+        if (select.value === "Other") { customInput.classList.remove('hidden'); customInput.focus(); } else { customInput.classList.add('hidden'); }
     }
 
+    // --- SMART UPDATE STATUS ---
     async function updateStatus(){ 
         const wb = document.getElementById('detectedWB').innerText; 
         let l = document.getElementById('currentLocSelect').value;
         let isCustom = false;
-        if(l === "Other") { l = document.getElementById('currentLocCustom').value.trim(); isCustom = true; }
+
+        if(l === "Other") {
+            l = document.getElementById('currentLocCustom').value.trim();
+            isCustom = true;
+        }
+
         if(!l) return alert("Select Location");
-        
+
+        // Logic for "Status" based on "Location"
         let s = "Arrived at Hub";
-        if (l.toUpperCase().includes("RIDER") || l.toUpperCase().includes("DELIVERY")) s = "Out for Delivery";
-        else if (l.toUpperCase() === "DELIVERED") s = "Delivered";
-        else if (l.toUpperCase().includes("PICKED UP") || l.toUpperCase().includes("ORIGIN")) s = "Picked Up";
+        const lu = l.toUpperCase();
+        if (lu.includes("RIDER") || lu.includes("DELIVERY")) s = "Out for Delivery";
+        else if (lu === "DELIVERED") s = "Delivered";
+        else if (lu.includes("PICKED UP") || lu.includes("ORIGIN")) s = "Picked Up";
 
         try{ 
-            await window.updateDoc(window.doc(window.db,"parcels",wb), { currentStatus: s, history: window.arrayUnion({ status: s, location: l, time: new Date().toLocaleString(), user: window.currentUserEmail }) }); 
-            if (isCustom) { await window.setDoc(window.doc(window.db, "settings", "locations"), { list: window.arrayUnion(l) }, { merge: true }); }
-            alert(`UPDATED: ${s} - ${l}`); logAction("UPDATE", `${wb} -> ${s} @ ${l}`); resetScan(); 
-        } catch(e) { alert("Error: " + e.message); }
+            // Update Parcel
+            await window.updateDoc(window.doc(window.db,"parcels",wb), {
+                currentStatus: s,
+                history: window.arrayUnion({
+                    status: s,
+                    location: l,
+                    time: new Date().toLocaleString(),
+                    user: window.currentUserEmail
+                })
+            }); 
+            
+            // Save New Location if Custom
+            if (isCustom) {
+                const settingsRef = window.doc(window.db, "settings", "locations");
+                await window.setDoc(settingsRef, {
+                    list: window.arrayUnion(l)
+                }, { merge: true });
+            }
+
+            alert(`Updated: ${s} @ ${l}`); 
+            logAction("UPDATE", `${wb} -> ${s} @ ${l}`); 
+            resetScan(); 
+
+        } catch(e) {
+            alert("Error: " + e.message);
+        }
     }
 
-    // --- REPRINT ---
-    function reprintRange() {
-        if(!currentTrackedData) return;
-        const start = parseInt(document.getElementById('rpStart').value);
-        const end = parseInt(document.getElementById('rpEnd').value);
-        const total = parseInt(currentTrackedData.details.qty);
-        if(start < 1 || end > total || start > end) return alert(`Invalid Range. Max is ${total}.`);
-        generatePrintLayout(currentTrackedData, start, end);
-        setTimeout(() => window.print(), 800);
-    }
-
-    // --- RESTORED BOXED LAYOUT ---
+    // --- AIRLINE TICKET LAYOUT (BOXED) ---
     function generatePrintLayout(data, startNum, endNum) {
         const printArea = document.getElementById('printArea');
         printArea.innerHTML = ""; printArea.style.display = 'flex';
@@ -478,7 +474,6 @@
     
     function generateRandomWB(){ document.getElementById('wbInput').value="VG-"+Math.floor(100000+Math.random()*900000); }
     
-    // CREATE FUNCTION (MAPPED FIELDS)
     async function createParcel(){
         const wb=document.getElementById('wbInput').value;
         const d={
@@ -498,6 +493,7 @@
         try{ await window.setDoc(window.doc(window.db,"parcels",wb),d); logAction("CREATE",wb); generatePrintLayout(d, 1, parseInt(d.details.qty)); setTimeout(()=>window.print(),800); }catch(e){alert("Error");}
     }
 
+    // OTHER FUNCTIONS
     async function publicTrack(){ trackLogic(document.getElementById('publicSearchInput').value.trim(), document.getElementById('publicResult')); }
     async function staffTrackParcel(){ 
         const wb=document.getElementById('staffTrackInput').value.trim(); const r=document.getElementById('staffTrackResult'); 
@@ -517,6 +513,8 @@
     async function loadLogs(){ try{const q=window.query(window.collection(window.db,"logs"),window.orderBy("timestamp","desc"),window.limit(20));const s=await window.getDocs(q);let h="";s.forEach(d=>{const l=d.data();h+=`<div class="border-bottom p-1"><strong>${l.action}</strong> ${l.details}<br><span style="font-size:9px">${l.timestamp} by ${l.user}</span></div>`});document.getElementById('logsContainer').innerHTML=h;}catch(e){} }
     async function exportToExcel() { const btn = document.querySelector('button[onclick="exportToExcel()"]'); const origText = btn.innerText; btn.innerText = "Downloading Data..."; btn.disabled = true; try { const q = window.query(window.collection(window.db, "parcels"), window.orderBy("waybill", "desc")); const querySnapshot = await window.getDocs(q); if (querySnapshot.empty) { alert("No data."); btn.innerText = origText; btn.disabled = false; return; } let csvContent = "Waybill,Status,Origin,Destination,Qty,Weight,Encoded By,Handling,Latest Update\n"; querySnapshot.forEach(doc => { const d = doc.data(); const clean = (text) => text ? `"${text.toString().replace(/"/g, '""')}"` : ""; const lastHist = d.history && d.history.length > 0 ? d.history[d.history.length - 1] : { time: '', location: '' }; const lastUpdate = `${lastHist.status} at ${lastHist.location} (${lastHist.time})`; csvContent += `${clean(d.waybill)},${clean(d.currentStatus)},${clean(d.shipper.addr)},${clean(d.consignee.addr)},${clean(d.details.qty)},${clean(d.details.weight)},${clean(d.createdBy)},${clean(d.details.handling)},${clean(lastUpdate)}\n`; }); const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.setAttribute("href", url); link.setAttribute("download", `VG_Cargo_Report_${new Date().toLocaleDateString()}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); } catch (e) { alert("Export Failed: " + e.message); } btn.innerText = origText; btn.disabled = false; }
     
+    function reprintRange() { if(!currentTrackedData) return; const start = parseInt(document.getElementById('rpStart').value); const end = parseInt(document.getElementById('rpEnd').value); const total = parseInt(currentTrackedData.details.qty); if(start < 1 || end > total || start > end) return alert(`Invalid Range. Max is ${total}.`); generatePrintLayout(currentTrackedData, start, end); setTimeout(() => window.print(), 800); }
+
     window.login=login;window.logout=logout;window.openLogin=openLogin;window.closeLogin=closeLogin;
     window.publicTrack=publicTrack;window.showPage=showPage;window.createParcel=createParcel;window.generateRandomWB=generateRandomWB;
     window.staffTrackParcel=staffTrackParcel;window.updateStatus=updateStatus;window.resetScan=resetScan;
