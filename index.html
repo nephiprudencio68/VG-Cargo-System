@@ -361,16 +361,28 @@
     function loadLocations() {
         const select = document.getElementById('currentLocSelect');
         const defaultHubs = ["MNL HUB (Manila)", "DVO HUB (Davao)", "CEB HUB (Cebu)", "ILO HUB (Iloilo)", "CGY HUB (Cagayan)", "GES HUB (Gensan)", "Rider (On Delivery)"];
+        
         window.onSnapshot(window.doc(window.db, "settings", "locations"), (docSnap) => {
             let hubs = defaultHubs;
-            if (docSnap.exists() && docSnap.data().list) hubs = docSnap.data().list;
-            if(!hubs.includes("DELIVERED")) hubs.push("DELIVERED");
+            
+            // Kunin ang listahan sa database kung meron
+            if (docSnap.exists() && docSnap.data().list) {
+                hubs = docSnap.data().list;
+            }
+
+            // TINANGGAL KO NA DITO YUNG CODE NA NAGDADAGDAG NG "DELIVERED"
+            
+            // Tanggalin ang duplicates
             hubs = [...new Set(hubs)].filter(h => h);
+            
             let options = `<option value="" disabled selected>Select Location...</option>`;
             hubs.sort().forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
             options += `<option value="Other">➕ Add New Location...</option>`;
+            
+            // Update the dropdown
             select.innerHTML = options;
         }, () => {
+            // Fallback kung may error
             let options = `<option value="" disabled selected>Select Location...</option>`;
             defaultHubs.forEach(hub => { options += `<option value="${hub}">${hub}</option>`; });
             options += `<option value="Other">➕ Add New Location...</option>`;
@@ -551,3 +563,4 @@
 </script>
 </body>
 </html>
+
